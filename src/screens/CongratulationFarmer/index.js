@@ -41,7 +41,7 @@ const CongratulationFarmer= () => {
           <Text style={styles.text3}>expert help.</Text>
 
           {/* BUTTON */}
-          <TouchableOpacity style={styles.createBtn}  onPress={() => navigation.navigate("Home")}>
+          <TouchableOpacity style={styles.createBtn}  onPress={() => navigation.navigate("FarmerTabs")}>
             <Text style={styles.createTxt}>Explore more Features</Text>
           </TouchableOpacity>
           
@@ -111,23 +111,29 @@ const styles = StyleSheet.create({
   Welcom:{
     color:"#fff",
     fontSize:18,
-    fontWeight:"600",
+    fontWeight:"900",
     marginLeft:30,
-    marginTop:18
+    marginTop:25
   },
   text:{
     color:'#fff',
     marginLeft:51,
-    marginTop:20
+    marginTop:10,
+    fontWeight:"300"
+
   },
   text2:{
     color:'#fff',
     marginLeft:50,
+    fontWeight:"300"
+
     
   },
   text3:{
     color:'#fff',
     marginLeft:100,
+    fontWeight:"300"
+
   },
 
   createBtn: {

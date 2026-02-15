@@ -66,14 +66,12 @@ const Login = () => {
             
             <TouchableOpacity 
               style={[styles.tab, activeTab === "guest" && styles.activeTab]}
-              onPress={() => setActiveTab("guest")}
+              onPress={() => {
+                setActiveTab("guest");
+                navigation.navigate("Guest"); // Guest screen par bhejne ke liye
+              }}
             >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === "guest" && styles.activeTabText,
-                ]}
-              >
+              <Text style={[styles.tabText, activeTab === "guest" && styles.activeTabText]}>
                 Guest
               </Text>
             </TouchableOpacity>
@@ -87,10 +85,12 @@ const Login = () => {
           {/* Input */}
           <View style={styles.inputBox}>
             <TextInput
-              placeholder="+92 3XX-XXXXXXX"
+              placeholder="example@email.com" 
               placeholderTextColor="black"
               style={styles.input}
-              keyboardType="phone-pad"
+              keyboardType="email-address"    
+              autoCapitalize="none"           
+              autoCorrect={false}             // Email mein spelling correction nahi chahiye
             />
           </View>
 
@@ -123,12 +123,12 @@ const styles = StyleSheet.create({
 
   logoBox: {
     alignItems: "center",
-    marginTop: 30,
+    marginTop: 50,
   },
 
   logo: {
-    width: 125,
-    height: 125,
+    width: 145,
+    height: 145,
     marginLeft: 10,
   },
 
@@ -204,11 +204,13 @@ const styles = StyleSheet.create({
 
   text1: {
     color: "white",
+    fontWeight:400,
     marginTop: 10,
     textAlign: "center",
   },
 
   text2: {
+    fontWeight:400,
     color: "white",
     textAlign: "center",
   },
@@ -224,11 +226,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingLeft: 15,
     justifyContent: "center",
+  
   },
 
   input: {
     color: "black",
     fontSize: 14,
+    fontWeight:"400"
   },
 
   btn: {
@@ -240,6 +244,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 30,
     alignSelf: "center",
+
   },
 
   btnText: {
@@ -257,15 +262,16 @@ const styles = StyleSheet.create({
   },
 
   footer: {
-    color: "white",
+    color: "#66E3B6",
+    fontWeight:400,
     fontSize: 13,
     marginTop: 20,
     textAlign: "center",
   },
 
   link: {
-    color: "#66E3B6",
-    fontWeight: "600",
+    color:'white',
+    fontWeight: "400",
   },
 });
 // 

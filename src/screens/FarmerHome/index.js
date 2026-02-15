@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import { BlurView } from "@react-native-community/blur";
 
 
-const Home = () => {
+const FarmerHome = () => {
     const navigation= useNavigation()
   return (
    
@@ -16,7 +16,8 @@ const Home = () => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 80 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        // contentContainerStyle={{ paddingBottom: 80 }}
       >
 
         {/* TOP BAR */}
@@ -104,12 +105,16 @@ const Home = () => {
               </View>
             </View>
 
-            <TouchableOpacity style={styles.btnSmall}>
-              <Text style={styles.btnSmallText}>View Details</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.cardContent}></View>
-        </View>
+
+                <View style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: 50 }}>
+                  <Image source={require("../../assets/Images/marketarrow.png")} style={styles.marketarrow} />
+                    <TouchableOpacity style={styles.btnSmall}>
+                      <Text style={styles.btnSmallText}>View Details</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                  <View style={styles.cardContent}></View>
+                </View>
 
 
 
@@ -165,7 +170,7 @@ const Home = () => {
 
 }
 
-export default Home
+export default FarmerHome
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
@@ -286,6 +291,9 @@ cardContent: {
     alignItems: "center", 
     marginBottom: 10
   },
+  marketarrow: {
+    width: 35,
+    height: 35,},
 
   cardIcon: {
     width: 23, 

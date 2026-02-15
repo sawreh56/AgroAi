@@ -17,12 +17,16 @@ import FarmerAccount from '../screens/FarmerAccount'
 import ExpertAccount from '../screens/ExpertAccount'
 import CongratulationFarmer from '../screens/CongratulationFarmer'
 import CongratulationExprt from '../screens/CongratulationExprt'
-import Home from '../screens/Home'
+import FarmerHome from '../screens/FarmerHome'
 import ExpetHome from '../screens/ExpetHome'
 import DiseaseDetection from '../screens/DiseaseDetection'
 import DetectionResult from '../screens/DetectionResult'
 import Recommedation from '../screens/Recommedation'
 import CropRecommend from '../screens/CropRecommend'
+import FarmerTabs from '../Navigation/FarmerTabs';
+import DirectAgro from '../screens/DirectAgro';
+import MarketPrice from '../screens/MarketPrice';
+import ChatScreen from '../screens/ChatScreen';
 
 
 
@@ -49,13 +53,16 @@ const StackNavigation = () => {
         <Stack.Screen name="ExpertAccount" component={ExpertAccount} />
         <Stack.Screen name="CongratulationFarmer" component={CongratulationFarmer} />
         <Stack.Screen name="CongratulationExprt" component={CongratulationExprt} />
-        <Stack.Screen name="Home" component={Home} />
-        {/* <Stack.Screen name="TabNavigation" component={TabNavigation} /> */}
+        {/* <Stack.Screen name="FarmerHome" component={FarmerHome} /> */}
+        <Stack.Screen name="FarmerTabs" component={FarmerTabs} />
         <Stack.Screen name="ExpetHome" component={ExpetHome} />
         <Stack.Screen name="DiseaseDetection" component={DiseaseDetection} />
         <Stack.Screen name="DetectionResult" component={DetectionResult} />
         <Stack.Screen name="Recommedation" component={Recommedation} />
         <Stack.Screen name="CropRecommend" component={CropRecommend} />
+        <Stack.Screen name="DirectAgro" component={DirectAgro} />
+        <Stack.Screen name="MarketPrice" component={MarketPrice} />
+        <Stack.Screen name="ChatScreen" component={ChatScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>

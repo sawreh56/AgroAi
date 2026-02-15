@@ -1,11 +1,12 @@
 import {ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity,TextInput, ScrollView} from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { BlurView } from "@react-native-community/blur";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const ExpertAccount = () => {
   const navigation = useNavigation();
+  const [isChecked, setIsChecked] = useState(false);
 
   return (
     <ScrollView>
@@ -55,17 +56,12 @@ const ExpertAccount = () => {
               style={styles.input}
               keyboardType="phone-pad"
             />
-            <TouchableOpacity
-              style={styles.otpBtn}
-              onPress={() => navigation.navigate("Otp")}
-            >
-              <Text style={styles.otpTxt}>Send OTP</Text>
-            </TouchableOpacity>
+            
           </View>
 
           <View style={styles.inputBox}>
             <TextInput
-              placeholder="Email (Optional)"
+              placeholder="Email (Required)"
               placeholderTextColor="#000"
               style={styles.input}
             />
@@ -101,14 +97,21 @@ const ExpertAccount = () => {
           </View>
           
           {/* TERMS */}
-          <View style={styles.row}>
-            <Icon name="checkbox" size={22} color="#32d296" />
-            <TouchableOpacity>
-              <Text style={styles.termsTxt}>
+         <View style={styles.row}>
+            <TouchableOpacity onPress={() => setIsChecked(!isChecked)}>
+              <Icon 
+                name={isChecked ? "checkbox" : "square-outline"} 
+                size={22} 
+                color={isChecked ? "#7ADAA5" : "rgba(255,255,255,0.4)"} 
+              />
+            </TouchableOpacity>
+
+            {/* Is View ko dhyan se dekhein, flex: 1 aur flexShrink lazmi hai */}
+            <View style={{ flex: 1, marginLeft: 10 }}> 
+              <Text style={styles.termsTxt} numberOfLines={2}>
                 Agree to <Text style={styles.link}>Terms & Privacy</Text>
               </Text>
-
-            </TouchableOpacity>
+            </View>
           </View>
 
           {/* BUTTON */}
@@ -137,9 +140,9 @@ const ExpertAccount = () => {
 export default ExpertAccount;
 
 const styles = StyleSheet.create({
-  bg: {
-    flex: 1,
-  },
+  // bg: {
+  //   flex: ,
+  // },
 
   backBtn: {
     position: "absolute",
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
     color:"#fff",
     fontSize:17,
     fontWeight:"bold",
-    marginLeft:85,
+    marginLeft:100,
   },
 
   cardWrapper: {
@@ -175,7 +178,7 @@ const styles = StyleSheet.create({
   /** BLUR BOX WRAPPER (Correct) */
   blurContainer: {
     width: "100%",
-    height:"87.5%",
+    height:"86%",
     backgroundColor: "transparent",
     borderRadius: 15,
     overflow: "hidden",

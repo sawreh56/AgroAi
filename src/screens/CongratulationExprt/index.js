@@ -119,16 +119,22 @@ const styles = StyleSheet.create({
   text:{
     color:'#fff',
     marginLeft:38,
-    marginTop:20
+    marginTop:20,
+    fontWeight:"300"
+
   },
   text2:{
     color:'#fff',
     marginLeft:59,
+    fontWeight:"300"
+
     
   },
   text3:{
     color:'#fff',
     marginLeft:98,
+    fontWeight:"300"
+
   },
 
   createBtn: {

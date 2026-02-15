@@ -44,7 +44,11 @@ const ExpetHome = () => {
         {/* SEARCH */}
         <View style={styles.searchBox}>
           <TextInput placeholder="Search" placeholderTextColor="#7f7f7f" style={styles.searchInput} />
-          <Image source={require("../../assets/Images/search.png")} style={styles.searchIcon} />
+          
+          <TouchableOpacity>
+            <Image source={require("../../assets/Images/search.png")} style={styles.searchIcon} />
+          </TouchableOpacity>
+
         </View>
 
         {/* ALL CARDS */}
@@ -68,9 +72,9 @@ const ExpetHome = () => {
                     <Text style={styles.btnText}>View & Answer</Text>
                 </TouchableOpacity>   
           </View>
-        </View>
-        <View style={styles.cardContent}>
-        </View>
+          </View>
+            <View style={styles.cardContent}>
+          </View>
 
 
 
@@ -104,9 +108,9 @@ const ExpetHome = () => {
 
             </View>
           
-        </View>
-        <View style={styles.cardContent}></View>
-        </View>
+            </View>
+              <View style={styles.cardContent}></View>
+            </View>
 
 
 
@@ -130,7 +134,7 @@ const ExpetHome = () => {
             <Text style={styles.btnText}>View Market Trends</Text>
           </TouchableOpacity>
           </View>
-                    <View style={styles.cardContent}></View>
+          <View style={styles.cardContent}></View>
         </View>
 
 
@@ -181,16 +185,16 @@ const styles = StyleSheet.create({
     
   },
   menuu:{
-    height:17,
-    width:17,
+    height:20,
+    width:19,
     marginLeft:15,
-    marginTop:8
+    marginTop:15
   },
   iconn:{
-    height:18,
-    width:18,
-    marginLeft:5,
-    marginTop:8
+    height:22,
+    width:22,
+    marginLeft:10,
+    marginTop:15
     
   },
   pointt:{
@@ -207,55 +211,58 @@ const styles = StyleSheet.create({
   },
   tittle:{
     color:"#fff",
-    fontSize:18,
+    fontSize:24,
     fontWeight:"600",
-    marginLeft:110,
-    marginTop:2
+    marginLeft:80,
+    marginTop:15,
+    fontWeight:"600"
   },
   belll:{
-    height:20,
-    width:20,
-    marginLeft:100,
-    marginTop:12
+    height:26,
+    width:26,
+    marginLeft:130,
+    marginTop:25
     
   },
   welcm:{
     color:"#fff",
     fontSize:23,
-    fontWeight:"600",
+    fontWeight:"900",
     marginLeft:110,
-    marginTop:20
+    marginTop:40
   },
   text1:{
     color:"#fff",
     fontSize:15,
-    fontWeight:"600",
+    fontWeight:"400",
     marginLeft:70,
-    marginTop:2
+    marginTop:10
   },
   searchBox: {
-    marginTop: 10,
+    marginTop: 50,
     backgroundColor: "#fff",
     height: 45,
     width:310,
-    borderRadius: 25,
+    borderRadius: 15,
     paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",
-    marginLeft:22
+    marginLeft:35
   },
   searchInput: {
-    flex: 1
+    flex: 1,
+    color:"black",
+    fontWeight:"100"
   },
   searchIcon: {
     width: 22,
     height: 22
   },
-  cardWrapper: {
-    width: 300,
-    alignSelf: "center",
-    marginTop: 20,
-  },
+  // cardWrapper: {
+  //   width: 300,
+  //   alignSelf: "center",
+  //   marginTop: 40,
+  // },
 
 cardWrapper: {
   width: 310,
@@ -273,6 +280,7 @@ blurBox: {
   overflow: "hidden",
   borderWidth: 1,
   borderColor: "#ffffff50",
+  
 },
 
 blurFill: {

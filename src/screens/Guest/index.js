@@ -8,7 +8,7 @@ const Guest = () => {
     const navigation=useNavigation()
     const [name, setName] = useState("");
     const [location, setLocation] = useState("");
-    const [activeTab, setActiveTab] = useState("Guest");
+    const [activeTab, setActiveTab] = useState("guest");
   
   return (
     <ImageBackground
@@ -41,38 +41,32 @@ const Guest = () => {
             <View style={styles.cardContent}></View>
 
             {/* Tabs */}
+          {/* Tabs */}
           <View style={styles.tabHolder}>
             <TouchableOpacity
-              onPress={() => setActiveTab("login")}
+              onPress={() => {
+              setActiveTab("login");
+              navigation.navigate("Login"); // Login screen ka name yahan likhein
+             }}
               style={[
-                styles.tab,
-                activeTab === "login" ? styles.tabActiveLeft : null,
+              styles.tab,
+              activeTab === "login" ? styles.tabActiveLeft : null,
               ]}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === "login" ? styles.tabTextActive : null,
-                ]}
               >
+              <Text style={[styles.tabText, activeTab === "login" ? styles.tabTextActive : null]}>
                 Login
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => setActiveTab("guest")}
+              onPress={() => setActiveTab("guest")} // Guest par isi screen par rahe ga
               style={[
-                styles.tab,
-                activeTab === "guest" ? styles.tabActiveRight : null,
+              styles.tab,
+              activeTab === "guest" ? styles.tabActiveRight : null,
               ]}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === "guest" ? styles.tabTextActive : null,
-                ]}
               >
-                Guest
+              <Text style={[styles.tabText, activeTab === "guest" ? styles.tabTextActive : null]}>
+              Guest
               </Text>
             </TouchableOpacity>
           </View>
@@ -102,16 +96,22 @@ const Guest = () => {
           </View>
 
           {/* Continue button */}
-          <TouchableOpacity style={styles.continueBtn}>
+          <TouchableOpacity style={styles.continueBtn} onPress={() => navigation.navigate("FarmerTabs")}>
             <Text style={styles.continueText}>Continue</Text>
           </TouchableOpacity>
 
           {/* Bottom text */}
-           <TouchableOpacity>
-                <Text style={styles.footer}>
-                    Later,<Text style={styles.link}> I want to create my Account</Text>
-                </Text>
-           </TouchableOpacity>
+         <View style={{ flexDirection: "row",marginTop: 10, }}>
+           <Text style={styles.footer}>Later,</Text>
+            <TouchableOpacity>
+              <Text 
+                style={styles.link} 
+                onPress={() => navigation.navigate("RoleSelect")}>
+                I want to create my Account
+              </Text>
+            </TouchableOpacity>
+          </View>
+          
                   
         </View>
 
@@ -221,6 +221,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 8,
     lineHeight: 18,
+    fontFamily:"400"
   },
 
   inputWrap: {
@@ -234,10 +235,12 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: "rgba(255,255,255,0.4)",
     paddingHorizontal: 18,
-    color: "#fff",
+    color: "#000000",
     borderWidth: 1,
     borderColor: "#FFFFFF99",
     fontSize: 14,
+    
+    
   },
 
   continueBtn: {
@@ -248,7 +251,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
-    marginTop: 60,
+    marginTop: 45,
+    
   },
 
   continueText: {
@@ -258,14 +262,16 @@ const styles = StyleSheet.create({
   },
 
   footer: {
-    color: "white",
+    color: "#66E3B6",
     fontSize: 13,
-    marginTop:20,
+    marginTop:15,
     marginLeft:35
   },
 
   link: {
-    color: "#66E3B6",
+    color: "#ffffff",
     fontWeight: "600",
+    marginTop:15,
+    marginLeft:5
   },
 });

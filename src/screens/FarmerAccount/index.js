@@ -1,11 +1,12 @@
 import {ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity,TextInput} from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { BlurView } from "@react-native-community/blur";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const FarmerAccount = () => {
   const navigation = useNavigation();
+  const [isChecked, setIsChecked] = useState(false);
 
   return (
     <ImageBackground
@@ -54,17 +55,12 @@ const FarmerAccount = () => {
               style={styles.input}
               keyboardType="phone-pad"
             />
-            <TouchableOpacity
-              style={styles.otpBtn}
-              onPress={() => navigation.navigate("Otp")}
-            >
-              <Text style={styles.otpTxt}>Send OTP</Text>
-            </TouchableOpacity>
+            
           </View>
 
           <View style={styles.inputBox}>
             <TextInput
-              placeholder="Email (Optional)"
+              placeholder="Email (Required)"
               placeholderTextColor="#000"
               style={styles.input}
             />
@@ -87,14 +83,22 @@ const FarmerAccount = () => {
           </View>
 
           {/* TERMS */}
-          <View style={styles.row}>
-            <Icon name="checkbox" size={22} color="#32d296" />
-            <TouchableOpacity>
-              <Text style={styles.termsTxt}>
-                Agree to <Text style={styles.link}>Terms & Privacy</Text>
-              </Text>
+          
+         <View style={styles.row}>
+          <TouchableOpacity onPress={() => setIsChecked(!isChecked)}>
+            <Icon 
+              name={isChecked ? "checkbox" : "square-outline"} 
+              size={22} 
+              color={isChecked ? "#7ADAA5" : "rgba(255,255,255,0.4)"} 
+            />
+          </TouchableOpacity>
 
-            </TouchableOpacity>
+          {/* Is View ko dhyan se dekhein, flex: 1 aur flexShrink lazmi hai */}
+          <View style={{ flex: 1, marginLeft: 10 }}> 
+            <Text style={styles.termsTxt} numberOfLines={2}>
+              Agree to <Text style={styles.link}>Terms & Privacy</Text>
+            </Text>
+          </View>
           </View>
 
           {/* BUTTON */}
@@ -148,7 +152,7 @@ const styles = StyleSheet.create({
     color:"#fff",
     fontSize:17,
     fontWeight:"bold",
-    marginLeft:85
+    marginLeft:100
   },
 
   cardWrapper: {
@@ -205,22 +209,25 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-    marginLeft:30
-  },
-
+ row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 15,
+    paddingHorizontal: 10,
+    marginLeft: 20,
+    width: '100%', 
+},
   termsTxt: {
-    color: "#7ADAA5",
-    marginLeft:5,
-  },
-
-  link: {
-    color: "#fff",
-    textDecorationLine: "underline",
-  },
+    color: '#7ADAA5', 
+    fontSize: 14,
+    flexWrap: 'wrap',
+    fontWeight:"400"
+},
+link: {
+    color: 'white',
+    textDecorationLine: 'underline',
+    fontWeight: '400',
+},
 
   createBtn: {
     backgroundColor: "#7ADAA5",

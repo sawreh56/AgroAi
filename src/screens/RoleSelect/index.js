@@ -125,7 +125,8 @@ const styles = StyleSheet.create({
 
   subtitle: {
     color: "#ddd",
-    fontSize: 14,
+    fontSize: 13,
+    fontWeight:400,
     textAlign: "center",
     marginTop: 50,
     marginLeft:10
@@ -145,16 +146,19 @@ const styles = StyleSheet.create({
 
   btnText: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: 17,
+    fontWeight: "800",
   },
 
   link: {
+    fontSize:13,
+    fontWeight:400,
     color: "#fff",
     marginTop: 10,
     textAlign: "center",
     textDecorationLine: "underline",
-    marginRight:10
+    marginRight:10,
+
   },
 
   or: {
@@ -168,11 +172,14 @@ const styles = StyleSheet.create({
 
   login: {
     color: "#7ADAA5",
-    textAlign: "center",
+    // textAlign: "center",
+    width:'70%'
   },
 
   loginLink: {
     color: "#FFFFFF",
     fontWeight: "700",
+    marginLeft:5
+    
   },
 });

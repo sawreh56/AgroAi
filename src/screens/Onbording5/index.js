@@ -38,17 +38,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25
   },
   logo: {
-    width: 130, 
-    height: 130,
+    width: 140, 
+    height: 140,
     alignSelf: "center",
-    marginTop: 30,
+    marginTop: 60,
     tintColor: "#fff" 
   },
   title: {
     color: "white", 
-    fontSize: 25,
+    fontSize: 26,
     fontWeight: "bold",
-    marginTop: 55,
+    marginTop: 75,
     marginLeft:1
   },
   desc: {
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     height:10,
     width:80,
     marginLeft:126,
-    marginTop:115
+    marginTop:120
   },
   
   
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf:"center",
-    marginTop:50,
+    marginTop:30,
     width:200,
     height:50
   },

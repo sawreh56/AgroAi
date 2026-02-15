@@ -1,12 +1,12 @@
 import React from "react";
 import Swiper from "react-native-swiper";
-import Onboarding from '../Onbording';
-import Onboarding2 from '../Onbording2';
-import Onboarding3 from '../Onbording3';
-import Onboarding4 from '../Onbording4';
-import Onboarding5 from '../Onbording5';
+import Onbording from '../Onbording';
+import Onbording2 from '../Onbording2';
+import Onbording3 from '../Onbording3';
+import Onbording4 from '../Onbording4';
+import Onbording5 from '../Onbording5';
 
-export default function OnboardingMain({ navigation }) {
+export default function OnbordingMain({ navigation }) {
   let swiperRef = null;
 
   const goNext = () => {
@@ -25,11 +25,11 @@ export default function OnboardingMain({ navigation }) {
       activeDotColor="#3EB489"
       ref={(ref) => (swiperRef = ref)}
     >
-      <Onboarding onNext={goNext} />
-      <Onboarding2 onNext={goNext} />
-      <Onboarding3 onNext={goNext} />
-      <Onboarding4 onNext={goNext} />
-      <Onboarding5 onNext={finish} />
+      <Onbording onNext={goNext} />
+      <Onbording2 onNext={goNext} />
+      <Onbording3 onNext={goNext} />
+      <Onbording4 onNext={goNext} />
+      <Onbording5 onNext={finish} />
     </Swiper>
   );
 }
