@@ -73,3 +73,24 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Environment and secrets
+# Local environment files (do NOT commit)
+.env
+.env.*
+
+# Firebase / Google services files
+**/google-services.json
+**/GoogleService-Info.plist
+
+# Android keystores
+*.jks
+*.keystore
+
+# Fastlane credentials
+fastlane/Matchfile
+fastlane/credentials
+
+# Local native build files (already covered, but explicit)
+ios/Pods/
+android/app/debug.keystore
