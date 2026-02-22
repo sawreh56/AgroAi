@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,11 +7,78 @@ import {
   TouchableOpacity,
   ScrollView,
   ImageBackground,
+  Alert,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const CropRecommend = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const [recommendation, setRecommendation] = useState("");
+  const [topCrops, setTopCrops] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (route.params?.recommendation && route.params?.topCrops) {
+      setRecommendation(route.params.recommendation);
+      setTopCrops(route.params.topCrops);
+      setLoading(false);
+    } else {
+      Alert.alert("Error", "No recommendation data found", [
+        { text: "OK", onPress: () => navigation.goBack() }
+      ]);
+    }
+  }, [route.params]);
+
+  // Crop image mapping - simplified to only mango for now
+  const getCropImage = (cropName) => {
+    // Default to mango image for all crops - you can add more images later
+    return require("../../assets/Images/mango.png");
+  };
+
+  // Crop details mapping - simplified
+  const getCropDetails = (cropName) => {
+    const cropDetails = {
+      'mango': {
+        description: "Mango is a delicious tropical fruit, best grown in warm climates with well-drained soil.",
+        water: "Moderate to High",
+        soil: "Loamy, pH 6.0–7.0",
+        climate: "Warm, high humidity"
+      },
+      'rice': {
+        description: "Rice is a staple food crop that requires abundant water and warm temperatures.",
+        water: "Very High",
+        soil: "Clay, pH 5.5–7.0",
+        climate: "Hot and humid"
+      },
+      'wheat': {
+        description: "Wheat is a major cereal crop that grows best in cooler climates.",
+        water: "Moderate",
+        soil: "Loamy, pH 6.0–7.5",
+        climate: "Cool, dry"
+      }
+    };
+    
+    return cropDetails[cropName?.toLowerCase()] || {
+      description: `${cropName} is a recommended crop based on your environmental conditions.`,
+      water: "Moderate",
+      soil: "Well-drained",
+      climate: "Moderate"
+    };
+  };
+
+  if (loading) {
+    return (
+      <ImageBackground source={require("../../assets/Images/bg2.png")} style={styles.bg}>
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Loading recommendation...</Text>
+        </View>
+      </ImageBackground>
+    );
+  }
+
+  const mainCrop = topCrops[0] || "Unknown";
+  const cropDetails = getCropDetails(mainCrop);
 
   return (
     <ImageBackground
@@ -42,27 +109,38 @@ const CropRecommend = () => {
         {/* Main Card */}
         <View style={styles.card}>
           <Text style={styles.label}>Your Recommended Crop Is:</Text>
-          <Text style={styles.cropName}>Mango</Text>
+          <Text style={styles.cropName}>{mainCrop.charAt(0).toUpperCase() + mainCrop.slice(1)}</Text>
 
-          {/* Crop Image */}
+          {/* Crop Image - Using mango image for all crops for now */}
           <Image
-            source={require("../../assets/Images/mango.png")}
+            source={getCropImage(mainCrop)}
             style={styles.cropImage}
           />
 
           {/* Details Box */}
           <View style={styles.detailBox}>
             <Text style={styles.detailText}>
-              Mango is a delicious tropical fruit, best grown in warm climates
-              with well-drained soil.
+              {cropDetails.description}
             </Text>
 
             <Text style={styles.detailText}>
-              <Text style={styles.bold}>Water Needs:</Text> Moderate to High{"\n"}
-              <Text style={styles.bold}>Optimal Soil:</Text> Loamy, pH 6.0–7.0{"\n"}
-              <Text style={styles.bold}>Optimal Climate:</Text> Warm, high humidity
+              <Text style={styles.bold}>Water Needs:</Text> {cropDetails.water}{"\n"}
+              <Text style={styles.bold}>Optimal Soil:</Text> {cropDetails.soil}{"\n"}
+              <Text style={styles.bold}>Optimal Climate:</Text> {cropDetails.climate}
             </Text>
           </View>
+
+          {/* Top 5 Crops Section */}
+          {topCrops.length > 1 && (
+            <View style={styles.topCropsBox}>
+              <Text style={styles.topCropsTitle}>Top 5 Suitable Crops:</Text>
+              {topCrops.map((crop, index) => (
+                <Text key={index} style={styles.topCropItem}>
+                  {index + 1}. {crop.charAt(0).toUpperCase() + crop.slice(1)}
+                </Text>
+              ))}
+            </View>
+          )}
         </View>
 
         {/* Button */}
@@ -80,6 +158,18 @@ const CropRecommend = () => {
 
 const styles = StyleSheet.create({
   bg: { flex: 1 },
+
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  loadingText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 
   header: {
     marginTop: 20,
@@ -149,6 +239,29 @@ const styles = StyleSheet.create({
 
   bold: {
     fontWeight: "bold",
+  },
+
+  topCropsBox: {
+    backgroundColor: "#F0F8F5",
+    padding: 15,
+    borderRadius: 10,
+    width: "90%",
+    alignSelf: "center",
+    marginTop: 15,
+    borderWidth: 1,
+    borderColor: "#7ADAA5",
+  },
+
+  topCropsTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+
+  topCropItem: {
+    fontSize: 14,
+    marginVertical: 2,
   },
 
   btn: {

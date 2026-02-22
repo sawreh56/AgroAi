@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import {launchCamera} from 'react-native-image-picker';
 
 const DiseaseDetection = () => {
     const navigation = useNavigation();

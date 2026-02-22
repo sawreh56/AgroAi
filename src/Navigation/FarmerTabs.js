@@ -1,20 +1,69 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+// Maine PermissionsAndroid aur Platform yahan add kar diye hain
+import { View, StyleSheet, TouchableOpacity, Image, Alert, PermissionsAndroid, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FarmerHome from '../screens/FarmerHome'; 
 import DirectAgro from '../screens/DirectAgro';
 import MarketPrice from '../screens/MarketPrice';
 import ChatScreen from '../screens/ChatScreen';
+import { launchCamera } from 'react-native-image-picker';
 
 const Tab = createBottomTabNavigator();
 const EmptyScreen = () => <View style={{ flex: 1, backgroundColor: 'transparent' }} />;
 
 const FarmerTabs = () => {
-
-  const inactiveColor = "rgba(0, 0, 0, 0.3)"; // White background ke liye ye behtar hai
+  const inactiveColor = "rgba(0, 0, 0, 0.3)";
   const activeColor = "#7ADAA5";
-  const inactiveOpacity = 0.4; // Jo color aapne manga tha uska effect dene ke liye
+  const inactiveOpacity = 0.4;
+
+  // --- SMART CAMERA FUNCTION START ---
+  const openCamera = async () => {
+    console.log("Camera Button Pressed!");
+
+    // Android ke liye runtime permission check
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: "Camera Permission",
+            message: "App ko photo khainchne ke liye ijazat chahiye",
+            buttonNeutral: "Baad Mein",
+            buttonNegative: "Mana Karein",
+            buttonPositive: "Theek Hai",
+          }
+        );
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert("Permission Error", "Aap ne camera ki ijazat nahi di.");
+          return;
+        }
+      } catch (err) {
+        console.warn(err);
+        return;
+      }
+    }
+
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
+      saveToPhotos: true,
+    };
+
+    launchCamera(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled camera');
+      } else if (response.errorCode) {
+        console.log('Camera Error: ', response.errorMessage);
+        Alert.alert("Error", "Camera nahi khul saka. Permission check karein.");
+      } else {
+        const source = response.assets[0].uri;
+        console.log("Photo URI: ", source);
+        Alert.alert("Success", "Photo khainch li gayi!");
+      }
+    });
+  };
+  // --- SMART CAMERA FUNCTION END ---
 
   return (
     <Tab.Navigator
@@ -24,7 +73,7 @@ const FarmerTabs = () => {
         tabBarStyle: styles.tabBar,
       }}
     >
-      {/* 1. Home Icon */}
+      {/* 1. HOME */}
       <Tab.Screen 
         name="Home" 
         component={FarmerHome} 
@@ -33,8 +82,8 @@ const FarmerTabs = () => {
             <Icon 
               name={focused ? "home" : "home-outline"} 
               size={26} 
-              margin={-15}
               color={focused ? activeColor : inactiveColor} 
+              style={{ marginTop: 1, opacity: focused ? 1 : inactiveOpacity }}
             />
           ),
         }}
@@ -59,20 +108,24 @@ const FarmerTabs = () => {
         name="CameraSpace" 
         component={EmptyScreen} 
         options={{
-          tabBarButton: (props) => (
+          tabBarButton: () => (
             <TouchableOpacity 
-              activeOpacity={0.7} 
-              onPress={() => console.log("Camera Open")} 
+              activeOpacity={0.8} 
+              onPress={openCamera} 
               style={styles.centerBtnContainer}
             >
               <View style={styles.centerBtn}>
-                <Icon name="camera" size={32} color={activeColor} />
+                <Image 
+                  source={require("../assets/Images/camera.png")} 
+                  style={{ width: 28, height: 28, tintColor: '#7ADAA5' }} 
+                />
               </View>
             </TouchableOpacity>
           ),
         }}
       />
-      {/* 4. COMMUNITY */}
+
+      {/* 4. CART */}
       <Tab.Screen 
         name="Cart" 
         component={DirectAgro} 
@@ -86,7 +139,7 @@ const FarmerTabs = () => {
         }} 
       />
 
-      {/* 5. PROFILE */}
+      {/* 5. CHAT */}
       <Tab.Screen 
         name="Chat" 
         component={ChatScreen} 
@@ -107,30 +160,27 @@ const FarmerTabs = () => {
 const styles = StyleSheet.create({
   tabBar: {
     position: 'absolute',
-    height: 60, // Height thodi badha di taake icons ko space mile
+    height: 60,
     backgroundColor: '#ffffff',
-    // borderTopLeftRadius: 30,
-    // borderTopRightRadius: 30,
-    paddingBottom: 15, // Content ko thoda niche karne ke liye
+    paddingBottom: 5,
     elevation: 15,
     borderWidth: 0,
   },
   sideIcon: {
     width: 27,
     height: 27,
-    marginTop: 15, // Is se side wale icons thode niche ho jayenge
+    marginTop: 15,
     resizeMode: 'contain',
   },
   centerBtnContainer: {
-    top: -40,
-    marginLeft: 5,
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    top: -25,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   centerBtn: {
-    width: 70,
-    height: 70,
-    borderRadius: 100,
+    width: 65,
+    height: 65,
+    borderRadius: 35,
     backgroundColor: '#fff',
     borderWidth: 4,
     borderColor: '#7ADAA5',

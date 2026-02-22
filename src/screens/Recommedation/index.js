@@ -7,12 +7,13 @@ import {
   TouchableOpacity,
   ScrollView,
   ImageBackground,
+  Alert
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 const Recommedation = () => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
   const [n, setN] = useState("");
   const [p, setP] = useState("");
   const [k, setK] = useState("");
@@ -20,6 +21,20 @@ const Recommedation = () => {
   const [humidity, setHumidity] = useState("");
   const [ph, setPh] = useState("");
   const [rainfall, setRainfall] = useState("");
+
+  const predictCrop = () => {
+    // Validation
+    if (!n || !p || !k || !temp || !humidity || !ph || !rainfall) {
+      Alert.alert("Error", "Please fill all fields");
+      return;
+    }
+
+    // Navigate to result screen with static data
+    navigation.navigate("CropRecommend", {
+      recommendation: "Mango",
+      topCrops: ["Mango", "Rice", "Wheat"]
+    });
+  };
 
   return (
     <ImageBackground
@@ -36,8 +51,6 @@ const Recommedation = () => {
                 />
         </TouchableOpacity>
         
-              
-
         <Text style={styles.header}>Crop Recommendation</Text>
         </View>
 
@@ -168,7 +181,7 @@ const Recommedation = () => {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("CropRecommend")}>
+        <TouchableOpacity style={styles.btn} onPress={predictCrop}>
           <Text style={styles.btnText}>Get Recommendation</Text>
         </TouchableOpacity>
       </ScrollView>

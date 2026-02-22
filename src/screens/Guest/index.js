@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground,TextInput } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground,TextInput, Alert } from "react-native";
 import React from "react";
 import { BlurView } from "@react-native-community/blur";
 import { useNavigation } from "@react-navigation/native";
@@ -9,6 +9,8 @@ const Guest = () => {
     const [name, setName] = useState("");
     const [location, setLocation] = useState("");
     const [activeTab, setActiveTab] = useState("guest");
+  const [nameError, setNameError] = useState("");
+  const [locationError, setLocationError] = useState("");
   
   return (
     <ImageBackground
@@ -81,22 +83,50 @@ const Guest = () => {
           <View style={styles.inputWrap}>
             <TextInput
               value={name}
-              onChangeText={setName}
+              onChangeText={(t) => {
+                setName(t);
+                if (nameError) setNameError("");
+              }}
               placeholder="Full Name"
               placeholderTextColor="#000000"
               style={styles.input}
             />
+            {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
+
             <TextInput
               value={location}
-              onChangeText={setLocation}
-              placeholder="Location (optional)"
+              onChangeText={(t) => {
+                setLocation(t);
+                if (locationError) setLocationError("");
+              }}
+              placeholder="Location"
               placeholderTextColor="#000000"
               style={[styles.input, { marginTop: 14 }]}
             />
+            {locationError ? <Text style={styles.errorText}>{locationError}</Text> : null}
           </View>
 
           {/* Continue button */}
-          <TouchableOpacity style={styles.continueBtn} onPress={() => navigation.navigate("FarmerTabs")}>
+          <TouchableOpacity
+            style={styles.continueBtn}
+            onPress={() => {
+              // clear previous
+              setNameError("");
+              setLocationError("");
+
+              if (!name.trim() || name.trim().length < 2) {
+                setNameError("Full name is required (min 2 characters).");
+                return;
+              }
+
+              if (!location.trim() || location.trim().length < 2) {
+                setLocationError("Location is required.");
+                return;
+              }
+
+              navigation.navigate("FarmerTabs");
+            }}
+          >
             <Text style={styles.continueText}>Continue</Text>
           </TouchableOpacity>
 
@@ -259,6 +289,13 @@ const styles = StyleSheet.create({
     color: "#FFFFFF99",
     fontWeight: "800",
     fontSize: 18,
+  },
+
+  errorText: {
+    color: "#ff6b6b",
+    fontSize: 12,
+    marginTop: 6,
+    textAlign: "center",
   },
 
   footer: {

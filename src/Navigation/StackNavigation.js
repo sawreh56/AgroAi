@@ -1,10 +1,12 @@
+import { enableScreens } from "react-native-screens";
+enableScreens(false);
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from '../screens/SplashScreen';
 import RoleSelect from '../screens/RoleSelect/index';
-import OnbordingMain from '../screens/OnbordingMain'
+// import OnbordingMain from '../screens/OnbordingMain'
 import Onbording from '../screens/Onbording';
 import Onbording2 from '../screens/Onbording2';
 import Onbording3 from '../screens/Onbording3';
@@ -27,6 +29,9 @@ import FarmerTabs from '../Navigation/FarmerTabs';
 import DirectAgro from '../screens/DirectAgro';
 import MarketPrice from '../screens/MarketPrice';
 import ChatScreen from '../screens/ChatScreen';
+import SellCrop from '../screens/SellCrop'
+// import FarmerDrawer from './FarmerDrawer';
+// import BuyCrops from '../screens/'
 
 
 
@@ -40,7 +45,7 @@ const StackNavigation = () => {
 
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="RoleSelect" component={RoleSelect} />
-        <Stack.Screen name="OnbordingMain" component={OnbordingMain} />
+        {/* <Stack.Screen name="OnbordingMain" component={OnbordingMain} /> */}
         <Stack.Screen name="Onbording" component={Onbording} />
         <Stack.Screen name="Onbording2" component={Onbording2} />
         <Stack.Screen name="Onbording3" component={Onbording3} />
@@ -63,6 +68,11 @@ const StackNavigation = () => {
         <Stack.Screen name="DirectAgro" component={DirectAgro} />
         <Stack.Screen name="MarketPrice" component={MarketPrice} />
         <Stack.Screen name="ChatScreen" component={ChatScreen} />
+        <Stack.Screen name="SellCrop" component={SellCrop} />
+        {/* <Stack.Screen name="BuyCrops" component={BuyCrops} /> */}
+        {/* <Stack.Screen name="FarmerDrawer" component={FarmerDrawer} /> */}
+
+
 
       </Stack.Navigator>
     </NavigationContainer>

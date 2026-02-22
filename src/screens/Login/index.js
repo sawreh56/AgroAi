@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   TextInput,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { BlurView } from "@react-native-community/blur";
@@ -14,6 +15,38 @@ import { useNavigation } from "@react-navigation/native";
 const Login = () => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("login");
+  const [identifier, setIdentifier] = useState(""); // email or phone
+  const [identifierError, setIdentifierError] = useState("");
+
+  const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+  const isValidPhone = (phone) => {
+    const digits = phone.replace(/\D/g, "");
+    return /^[0-9]{7,15}$/.test(digits);
+  };
+
+  const handleSendOtp = () => {
+    // clear previous
+    setIdentifierError("");
+
+    if (!identifier.trim()) {
+      setIdentifierError("This field is required.");
+      return;
+    }
+
+    if (identifier.includes("@")) {
+      if (!isValidEmail(identifier)) {
+        setIdentifierError("Enter a valid email address.");
+        return;
+      }
+    } else {
+      if (!isValidPhone(identifier)) {
+        setIdentifierError("Enter a valid phone number (7-15 digits).");
+        return;
+      }
+    }
+
+    navigation.navigate("Otp");
+  };
 
   return (
     <ImageBackground
@@ -85,20 +118,25 @@ const Login = () => {
           {/* Input */}
           <View style={styles.inputBox}>
             <TextInput
-              placeholder="example@email.com" 
+              placeholder="Email or phone"
               placeholderTextColor="black"
               style={styles.input}
-              keyboardType="email-address"    
-              autoCapitalize="none"           
-              autoCorrect={false}             // Email mein spelling correction nahi chahiye
+              value={identifier}
+              onChangeText={(t) => {
+                setIdentifier(t);
+                if (identifierError) setIdentifierError("");
+              }}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
             />
+            {identifierError ? (
+              <Text style={styles.errorText}>{identifierError}</Text>
+            ) : null}
           </View>
 
           {/* Button */}
-          <TouchableOpacity
-            style={styles.btn}
-            onPress={() => navigation.navigate("Otp")}
-          >
+          <TouchableOpacity style={styles.btn} onPress={handleSendOtp}>
             <Text style={styles.btnText}>Send OTP</Text>
           </TouchableOpacity>
 
@@ -233,6 +271,13 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 14,
     fontWeight:"400"
+  },
+
+  errorText: {
+    color: "#ff6b6b",
+    fontSize: 12,
+    marginTop: 6,
+    textAlign: "center",
   },
 
   btn: {

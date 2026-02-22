@@ -130,7 +130,7 @@ const FarmerHome = () => {
               </View>
             </View>
             <View style={styles.rowButtons}>
-              <TouchableOpacity style={styles.btnSmall}>
+              <TouchableOpacity style={styles.btnSmall} onPress={() => navigation.navigate("SellCrop")}>
                 <Text style={styles.btnSmallText}>Sell Crop</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.btnSmall}>

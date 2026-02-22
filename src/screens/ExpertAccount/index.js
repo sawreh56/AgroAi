@@ -1,4 +1,4 @@
-import {ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity,TextInput, ScrollView} from "react-native";
+import {ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity,TextInput, ScrollView, Alert, Platform} from "react-native";
 import React, { useState } from "react";
 import { BlurView } from "@react-native-community/blur";
 import { useNavigation } from "@react-navigation/native";
@@ -7,6 +7,78 @@ import Icon from "react-native-vector-icons/Ionicons";
 const ExpertAccount = () => {
   const navigation = useNavigation();
   const [isChecked, setIsChecked] = useState(false);
+
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [expertise, setExpertise] = useState("");
+  const [experience, setExperience] = useState("");
+  const [bio, setBio] = useState("");
+  const [fullNameError, setFullNameError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [expertiseError, setExpertiseError] = useState("");
+  const [experienceError, setExperienceError] = useState("");
+  const [bioError, setBioError] = useState("");
+
+  const baseUrl = Platform.OS === "android" ? "http://10.0.2.2:4000" : "http://localhost:4000";
+
+  const handleRegister = () => {
+    // clear previous
+    setFullNameError("");
+    setPhoneError("");
+    setEmailError("");
+    setExpertiseError("");
+    setExperienceError("");
+    setBioError("");
+
+    const emailRegex = /\S+@\S+\.\S+/;
+    const phoneDigits = phone.replace(/\D/g, "");
+
+    let hasError = false;
+
+    if (!isChecked) {
+      Alert.alert("Terms Required", "Please agree to the Terms & Privacy to continue.");
+      return;
+    }
+
+    if (!fullName.trim() || fullName.trim().length < 2) {
+      setFullNameError("Full name is required (min 2 characters).");
+      hasError = true;
+    }
+
+    if (!phoneDigits || phoneDigits.length < 7 || phoneDigits.length > 15) {
+      setPhoneError("Please enter a valid phone number (7-15 digits).");
+      hasError = true;
+    }
+
+    if (!email.trim() || !emailRegex.test(email)) {
+      setEmailError("Please enter a valid email address.");
+      hasError = true;
+    }
+
+    if (!expertise.trim()) {
+      setExpertiseError("Area of expertise is required.");
+      hasError = true;
+    }
+
+    if (!experience.trim()) {
+      setExperienceError("Years of experience is required.");
+      hasError = true;
+    } else if (isNaN(Number(experience))) {
+      setExperienceError("Years of experience must be a number.");
+      hasError = true;
+    }
+
+    if (!bio.trim()) {
+      setBioError("Short bio is required.");
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    navigation.navigate("CongratulationExprt");
+  };
 
   return (
     <ScrollView>
@@ -46,8 +118,18 @@ const ExpertAccount = () => {
 
           {/* INPUTS */}
           <View style={styles.inputBox}>
-            <TextInput placeholder="Full Name" placeholderTextColor="#000" style={styles.input} />
+            <TextInput
+              placeholder="Full Name"
+              placeholderTextColor="#000"
+              style={styles.input}
+              value={fullName}
+              onChangeText={(t) => {
+                setFullName(t);
+                if (fullNameError) setFullNameError("");
+              }}
+            />
           </View>
+          {fullNameError ? <Text style={styles.errorText}>{fullNameError}</Text> : null}
 
           <View style={styles.inputBox}>
             <TextInput
@@ -55,17 +137,29 @@ const ExpertAccount = () => {
               placeholderTextColor="#000"
               style={styles.input}
               keyboardType="phone-pad"
+              value={phone}
+              onChangeText={(t) => {
+                setPhone(t);
+                if (phoneError) setPhoneError("");
+              }}
             />
-            
           </View>
+          {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
 
           <View style={styles.inputBox}>
             <TextInput
               placeholder="Email (Required)"
               placeholderTextColor="#000"
               style={styles.input}
+              keyboardType="email-address"
+              value={email}
+              onChangeText={(t) => {
+                setEmail(t);
+                if (emailError) setEmailError("");
+              }}
             />
           </View>
+          {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
 
           <View style={styles. inputBox}>
@@ -73,9 +167,14 @@ const ExpertAccount = () => {
               placeholder="Area of Expertise"
               placeholderTextColor= "#000"
               style={styles.input}
-
+              value={expertise}
+              onChangeText={(t) => {
+                setExpertise(t);
+                if (expertiseError) setExpertiseError("");
+              }}
             />
           </View>
+          {expertiseError ? <Text style={styles.errorText}>{expertiseError}</Text> : null}
 
 
           <View style={styles. inputBox}>
@@ -83,8 +182,14 @@ const ExpertAccount = () => {
               placeholder="Years of Experience" 
               placeholderTextColor="#000"
               style={styles.input}
+              value={experience}
+              onChangeText={(t) => {
+                setExperience(t);
+                if (experienceError) setExperienceError("");
+              }}
             />
           </View>
+          {experienceError ? <Text style={styles.errorText}>{experienceError}</Text> : null}
 
 
           <View style={[styles. inputBox, { height: 50, textAlignVertical: "top" }]} >
@@ -92,9 +197,15 @@ const ExpertAccount = () => {
               style={styles.input}
               placeholder="Short Bio, Introduction"
               placeholderTextColor="#000"
+              value={bio}
+              onChangeText={(t) => {
+                setBio(t);
+                if (bioError) setBioError("");
+              }}
               multiline
             />
           </View>
+          {bioError ? <Text style={styles.errorText}>{bioError}</Text> : null}
           
           {/* TERMS */}
          <View style={styles.row}>
@@ -115,7 +226,7 @@ const ExpertAccount = () => {
           </View>
 
           {/* BUTTON */}
-          <TouchableOpacity style={styles.createBtn} onPress={() => navigation.navigate("CongratulationExprt")}>
+          <TouchableOpacity style={styles.createBtn} onPress={handleRegister}>
             <Text style={styles.createTxt}>Create Account</Text>
           </TouchableOpacity>
 
@@ -284,5 +395,11 @@ const styles = StyleSheet.create({
     marginLeft:22,
     height: 18,
     width: 22,
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: 12,
+    marginTop: 6,
+    marginLeft: 10,
   },
 });

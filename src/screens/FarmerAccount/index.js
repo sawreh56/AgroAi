@@ -1,4 +1,4 @@
-import {ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity,TextInput} from "react-native";
+import {ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity,TextInput, Alert} from "react-native";
 import React, { useState } from "react";
 import { BlurView } from "@react-native-community/blur";
 import { useNavigation } from "@react-navigation/native";
@@ -7,6 +7,66 @@ import Icon from "react-native-vector-icons/Ionicons";
 const FarmerAccount = () => {
   const navigation = useNavigation();
   const [isChecked, setIsChecked] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [location, setLocation] = useState("");
+  const [farmingType, setFarmingType] = useState("");
+  const [fullNameError, setFullNameError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [locationError, setLocationError] = useState("");
+  const [farmingTypeError, setFarmingTypeError] = useState("");
+  const [termsError, setTermsError] = useState("");
+
+  const handleCreateAccount = () => {
+    // clear previous errors
+    setFullNameError("");
+    setPhoneError("");
+    setEmailError("");
+    setLocationError("");
+    setFarmingTypeError("");
+    setTermsError("");
+
+    const emailRegex = /\S+@\S+\.\S+/;
+    const phoneDigits = phone.replace(/\D/g, "");
+
+    let hasError = false;
+
+    if (!fullName.trim() || fullName.trim().length < 2) {
+      setFullNameError("Full name is required (min 2 characters).");
+      hasError = true;
+    }
+
+    if (!phoneDigits || phoneDigits.length < 7 || phoneDigits.length > 15) {
+      setPhoneError("Please enter a valid phone number (7-15 digits).");
+      hasError = true;
+    }
+
+    if (!email.trim() || !emailRegex.test(email)) {
+      setEmailError("Please enter a valid email address.");
+      hasError = true;
+    }
+
+    if (!location.trim()) {
+      setLocationError("Location is required.");
+      hasError = true;
+    }
+
+    if (!farmingType.trim()) {
+      setFarmingTypeError("Farming type is required.");
+      hasError = true;
+    }
+
+    if (!isChecked) {
+      setTermsError("You must agree to Terms & Privacy.");
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    navigation.navigate("CongratulationFarmer");
+  };
 
   return (
     <ImageBackground
@@ -33,7 +93,7 @@ const FarmerAccount = () => {
       {/* CARD */}
       <View style={styles.cardWrapper}>
 
-        
+
         {/* BLUR BOX */}
         <View style={styles.blurContainer}>
           <BlurView
@@ -45,8 +105,18 @@ const FarmerAccount = () => {
 
           {/* INPUTS */}
           <View style={styles.inputBox}>
-            <TextInput placeholder="Full Name" placeholderTextColor="#000" style={styles.input} />
+            <TextInput
+              placeholder="Full Name"
+              placeholderTextColor="#000"
+              style={styles.input}
+              value={fullName}
+              onChangeText={(t) => {
+                setFullName(t);
+                if (fullNameError) setFullNameError("");
+              }}
+            />
           </View>
+          {fullNameError ? <Text style={styles.errorText}>{fullNameError}</Text> : null}
 
           <View style={styles.inputBox}>
             <TextInput
@@ -54,47 +124,73 @@ const FarmerAccount = () => {
               placeholderTextColor="#000"
               style={styles.input}
               keyboardType="phone-pad"
+              value={phone}
+              onChangeText={(t) => {
+                setPhone(t);
+                if (phoneError) setPhoneError("");
+              }}
             />
-            
+
           </View>
+          {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
 
           <View style={styles.inputBox}>
             <TextInput
               placeholder="Email (Required)"
               placeholderTextColor="#000"
               style={styles.input}
+              value={email}
+              onChangeText={(t) => {
+                setEmail(t);
+                if (emailError) setEmailError("");
+              }}
+              keyboardType="email-address"
+              autoCapitalize="none"
             />
           </View>
+          {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
           <View style={styles.inputBox}>
             <TextInput
               placeholder="Location / Address"
               placeholderTextColor="#000"
               style={styles.input}
+              value={location}
+              onChangeText={(t) => {
+                setLocation(t);
+                if (locationError) setLocationError("");
+              }}
             />
           </View>
+          {locationError ? <Text style={styles.errorText}>{locationError}</Text> : null}
 
           <View style={styles.inputBox}>
             <TextInput
               placeholder="Farming type / Crops"
               placeholderTextColor="#000"
               style={styles.input}
+              value={farmingType}
+              onChangeText={(t) => {
+                setFarmingType(t);
+                if (farmingTypeError) setFarmingTypeError("");
+              }}
             />
           </View>
+          {farmingTypeError ? <Text style={styles.errorText}>{farmingTypeError}</Text> : null}
 
           {/* TERMS */}
-          
+
          <View style={styles.row}>
           <TouchableOpacity onPress={() => setIsChecked(!isChecked)}>
-            <Icon 
-              name={isChecked ? "checkbox" : "square-outline"} 
-              size={22} 
-              color={isChecked ? "#7ADAA5" : "rgba(255,255,255,0.4)"} 
+            <Icon
+              name={isChecked ? "checkbox" : "square-outline"}
+              size={22}
+              color={isChecked ? "#7ADAA5" : "rgba(255,255,255,0.4)"}
             />
           </TouchableOpacity>
 
           {/* Is View ko dhyan se dekhein, flex: 1 aur flexShrink lazmi hai */}
-          <View style={{ flex: 1, marginLeft: 10 }}> 
+          <View style={{ flex: 1, marginLeft: 10 }}>
             <Text style={styles.termsTxt} numberOfLines={2}>
               Agree to <Text style={styles.link}>Terms & Privacy</Text>
             </Text>
@@ -102,12 +198,15 @@ const FarmerAccount = () => {
           </View>
 
           {/* BUTTON */}
-          <TouchableOpacity style={styles.createBtn} onPress={() => navigation.navigate("CongratulationFarmer")}>
+          <TouchableOpacity
+            style={styles.createBtn}
+            onPress={handleCreateAccount}
+          >
             <Text style={styles.createTxt}>Create Account</Text>
           </TouchableOpacity>
 
         </View>
-        
+
       </View>
 
       {/* Upload circle */}
@@ -140,7 +239,7 @@ const styles = StyleSheet.create({
 
   logoBox: {
     alignItems: "center",
-    
+
   },
 
   logo: {
@@ -215,10 +314,10 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingHorizontal: 10,
     marginLeft: 20,
-    width: '100%', 
+    width: '100%',
 },
   termsTxt: {
-    color: '#7ADAA5', 
+    color: '#7ADAA5',
     fontSize: 14,
     flexWrap: 'wrap',
     fontWeight:"400"
@@ -274,5 +373,11 @@ link: {
     marginLeft:22,
     height: 18,
     width: 22,
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: 12,
+    marginTop: 6,
+    marginLeft: 18,
   },
 });
