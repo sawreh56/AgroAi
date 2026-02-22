@@ -94,3 +94,4 @@ fastlane/credentials
 # Local native build files (already covered, but explicit)
 ios/Pods/
 android/app/debug.keystore
+.secure/

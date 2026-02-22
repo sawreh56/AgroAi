@@ -1,6 +1,8 @@
 apply plugin: "com.android.application"
 // apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+// Load .env variables for react-native-config
+apply from: "../../node_modules/react-native-config/android/dotenv.gradle"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
