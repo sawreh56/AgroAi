@@ -44,7 +44,7 @@ const Recommedation = () => {
       <ScrollView style={{ paddingHorizontal: 15 }}>
 
         <View style={{flexDirection:'row'}}>
-            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image
                 source={require("../../assets/Images/arrow.png")}
                 style={styles.headerIcon}

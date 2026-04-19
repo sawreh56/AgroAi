@@ -22,7 +22,7 @@ const DiseaseDetection = () => {
         <View style={styles.header}>
     
 
-          <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Image style={styles.backBtn} source={require("../../assets/Images/arrow.png")} />
             </TouchableOpacity>
 

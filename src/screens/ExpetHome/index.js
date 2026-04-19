@@ -1,7 +1,7 @@
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View,TextInput, ScrollView } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { BlurView } from "@react-native-community/blur";
+import SafeBlurView from "../../Components/SafeBlurView";
 
 
 const ExpetHome = () => {
@@ -55,7 +55,7 @@ const ExpetHome = () => {
       
         <View style={styles.cardWrapper}>
           <View style={styles.blurBox}>
-                <BlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
+                <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
                 <View style={styles.row}>
                     <Image
                         source={require("../../assets/Images/chats.png")}
@@ -81,7 +81,7 @@ const ExpetHome = () => {
 
         <View style={styles.cardWrapper}>
           <View style={styles.blurBox}>
-            <BlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
+            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
 
 
             <View style={styles.row}>
@@ -117,7 +117,7 @@ const ExpetHome = () => {
 
         <View style={styles.cardWrapper}>
           <View style={styles.blurBox}>
-            <BlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
+            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
              <View style={styles.row}>
             <Image
               source={require("../../assets/Images/market.png")}
@@ -145,7 +145,7 @@ const ExpetHome = () => {
 
         <View style={styles.cardWrapper}>
           <View style={styles.blurBox}>
-            <BlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
+            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
 
              <View style={styles.row}>
             <Image

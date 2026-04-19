@@ -1,16 +1,8 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  ImageBackground,
-  TextInput,
-  Alert,
-} from "react-native";
+import {StyleSheet,Text,View,Image,TouchableOpacity,ImageBackground,TextInput,Alert,} from "react-native";
 import React, { useState } from "react";
-import { BlurView } from "@react-native-community/blur";
+import SafeBlurView from "../../Components/SafeBlurView";
 import { useNavigation } from "@react-navigation/native";
+import { ScrollView } from "react-native-gesture-handler";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -49,6 +41,8 @@ const Login = () => {
   };
 
   return (
+      <ScrollView contentContainerStyle={{ flex: 1 }}>
+    
     <ImageBackground
       source={require("../../assets/Images/bg2.png")}
       style={styles.bg}
@@ -68,7 +62,7 @@ const Login = () => {
       
               {/* Blur only in this box (Android-safe) */}
               <View style={styles.blurContainer}>
-                <BlurView
+                <SafeBlurView
                   style={styles.absoluteBlur}
                   blurType="dark"
                   blurAmount={10}
@@ -130,9 +124,12 @@ const Login = () => {
               autoCapitalize="none"
               autoCorrect={false}
             />
-            {identifierError ? (
-              <Text style={styles.errorText}>{identifierError}</Text>
-            ) : null}
+            {/* FIXED HEIGHT ERROR BOX */}
+            <View style={{ height: 10, justifyContent: "center" }}>
+              <Text style={styles.errorText}>
+                {identifierError || " "}
+              </Text>
+            </View>
           </View>
 
           {/* Button */}
@@ -149,6 +146,7 @@ const Login = () => {
         </View>
       </View>
     </ImageBackground>
+    </ScrollView>
   );
 };
 
@@ -260,7 +258,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderColor: "#FFFFFF99",
     borderWidth: 1,
-    marginTop: 20,
+    marginTop: 22,
     alignSelf: "center",
     paddingLeft: 15,
     justifyContent: "center",
@@ -270,13 +268,15 @@ const styles = StyleSheet.create({
   input: {
     color: "black",
     fontSize: 14,
-    fontWeight:"400"
+    fontWeight:"400",
+    height: 45,
+    marginTop:6
   },
 
   errorText: {
     color: "#ff6b6b",
     fontSize: 12,
-    marginTop: 6,
+    marginBottom: -10,
     textAlign: "center",
   },
 
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 30,
+    marginTop: 40,
     alignSelf: "center",
 
   },

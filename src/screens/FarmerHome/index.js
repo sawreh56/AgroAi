@@ -1,7 +1,7 @@
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View,TextInput, ScrollView } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { BlurView } from "@react-native-community/blur";
+import SafeBlurView from "../../Components/SafeBlurView";
 
 
 const FarmerHome = () => {
@@ -57,7 +57,7 @@ const FarmerHome = () => {
       
         <View style={styles.cardWrapper}>
           <View style={styles.blurBox}>
-            <BlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
+            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
            <View style={styles.cardRow}>
               <Image source={require("../../assets/Images/leaf.png")} style={styles.cardIcon} />
               <View>
@@ -77,7 +77,7 @@ const FarmerHome = () => {
 
         <View style={styles.cardWrapper}>
           <View style={styles.blurBox}>
-            <BlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
+            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
             <View style= {styles.cardRow}>
               <Image source={require("../../assets/Images/pest.png")} style={styles.cardIcon} />
               <TouchableOpacity  onPress={() => navigation.navigate("DiseaseDetection")}>
@@ -96,7 +96,7 @@ const FarmerHome = () => {
 
         <View style={styles.cardWrapper}>
           <View style={styles.blurBox}>
-            <BlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
+            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
             <View style={styles.cardRow}>
               <Image source={require("../../assets/Images/market.png")} style={styles.cardIcon} />
               <View>
@@ -121,7 +121,7 @@ const FarmerHome = () => {
 
         <View style={styles.cardWrapper}>
           <View style={styles.blurBox}>
-            <BlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
+            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
             <View style={styles.cardRow}>
               <Image source={require("../../assets/Images/cart.png")} style={styles.cardIcon} />
               <View>
@@ -146,7 +146,7 @@ const FarmerHome = () => {
 
         <View style={styles.cardWrapper}>
           <View style={styles.blurBox}>
-            <BlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
+            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
             <View style={styles.cardRow}>
               <Image source={require("../../assets/Images/forum.png")} style={styles.cardIcon} />
               <View>

@@ -1,6 +1,6 @@
 import {ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity,TextInput, ScrollView, Alert, Platform} from "react-native";
 import React, { useState } from "react";
-import { BlurView } from "@react-native-community/blur";
+import SafeBlurView from "../../Components/SafeBlurView";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -109,7 +109,7 @@ const ExpertAccount = () => {
         
         {/* BLUR BOX */}
         <View style={styles.blurContainer}>
-          <BlurView
+          <SafeBlurView
             style={styles.blurFill}
             blurType="dark"
             blurAmount={8}

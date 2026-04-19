@@ -1,12 +1,33 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground, TextInput } from "react-native";
-import React, { useState, useEffect } from "react"; // 1. useEffect yahan lazmi check karein
-import { BlurView } from "@react-native-community/blur";
+import React, { useState, useEffect, useRef } from "react";
+import SafeBlurView from "../../Components/SafeBlurView";
 import { useNavigation } from "@react-navigation/native";
+import { ScrollView } from "react-native-gesture-handler";
 
 const Otp = () => {
     const [timerCount, setTimer] = useState(60);
     const navigation = useNavigation();
     const [otp, setOtp] = useState(["", "", "", ""]);
+       const inputRefs = useRef([]);
+
+       const handleChange = (text, index) => {
+        let newOtp = [...otp];
+        newOtp[index] = text;
+        setOtp(newOtp);
+
+        if (text && index < 3) {
+            inputRefs.current[index + 1]?.focus();
+        }
+    };
+
+    // ✅ ADD THIS (missing function)
+    const handleKeyPress = (e, index) => {
+        if (e.nativeEvent.key === "Backspace") {
+            if (otp[index] === "" && index > 0) {
+                inputRefs.current[index - 1]?.focus();
+            }
+        }
+    };
 
     // --- TIMER LOGIC
     useEffect(() => {
@@ -29,6 +50,7 @@ const Otp = () => {
     // -------------------------------------------------------
 
     return (
+        <ScrollView contentContainerStyle={{ flex: 1 }}>
         <ImageBackground
             source={require("../../assets/Images/bg2.png")}
             style={styles.bg}
@@ -45,7 +67,7 @@ const Otp = () => {
             {/* CARD */}
             <View style={styles.cardWrapper}>
                 <View style={styles.blurContainer}>
-                    <BlurView
+                    <SafeBlurView
                         style={styles.absoluteBlur}
                         blurType="dark"
                         blurAmount={1}
@@ -69,11 +91,19 @@ const Otp = () => {
 
                     {/* OTP BOXES */}
                     <View style={styles.inputContainer}>
-                        <TextInput keyboardType='numeric' maxLength={1} style={styles.inputField}></TextInput>
-                        <TextInput keyboardType='numeric' maxLength={1} style={styles.inputField}></TextInput>
-                        <TextInput keyboardType='numeric' maxLength={1} style={styles.inputField}></TextInput>
-                        <TextInput keyboardType='numeric' maxLength={1} style={styles.inputField}></TextInput>
-                    </View>
+  {otp.map((digit, index) => (
+    <TextInput
+      key={index}
+      ref={(ref) => (inputRefs.current[index] = ref)}
+      value={digit}
+      onChangeText={(text) => handleChange(text, index)}
+      onKeyPress={(e) => handleKeyPress(e, index)}
+      keyboardType="numeric"
+      maxLength={1}
+      style={styles.inputField}
+    />
+  ))}
+</View>
 
                     {/* TEXT 1 (Didn't receive code) */}
                     <Text style={styles.text1}>Didn’t receive the code?</Text>
@@ -107,6 +137,7 @@ const Otp = () => {
                 </View>
             </View>
         </ImageBackground>
+        </ScrollView>
     );
 };
 

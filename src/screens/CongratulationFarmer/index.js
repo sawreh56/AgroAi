@@ -1,7 +1,7 @@
 import { ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { BlurView } from "@react-native-community/blur";
+import SafeBlurView from "../../Components/SafeBlurView";
 
 
 const CongratulationFarmer= () => {
@@ -23,7 +23,7 @@ const CongratulationFarmer= () => {
 
          {/* Blur only in this box (Android-safe) */}
           <View style={styles.blurContainer}>
-            <BlurView
+            <SafeBlurView
               style={styles.absoluteBlur}
               blurType="dark"
               blurAmount={1}

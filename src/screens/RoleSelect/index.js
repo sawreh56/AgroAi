@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground } from "react-native";
 import React from "react";
-import { BlurView } from "@react-native-community/blur";
+import SafeBlurView from "../../Components/SafeBlurView";
 import { useNavigation } from "@react-navigation/native";
 
 
@@ -27,7 +27,7 @@ const RoleSelect = () => {
 
         {/* Blur only in this box (Android-safe) */}
         <View style={styles.blurContainer}>
-          <BlurView
+          <SafeBlurView
             style={styles.absoluteBlur}
             blurType="dark"
             blurAmount={1}

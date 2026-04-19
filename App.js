@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import StackNavigation from './src/Navigation/StackNavigation'
 import config from './src/config'
 
@@ -14,9 +15,15 @@ const App = () => {
     console.info('Loaded config:', { NODE_ENV: config.NODE_ENV })
   }
 
-  return <StackNavigation />
+  return (
+    <GestureHandlerRootView style={styles.root}>
+      <StackNavigation />
+    </GestureHandlerRootView>
+  )
 }
 
 export default App
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+})
