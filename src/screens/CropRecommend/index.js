@@ -28,7 +28,7 @@ const CropRecommend = () => {
         { text: "OK", onPress: () => navigation.goBack() }
       ]);
     }
-  }, [route.params]);
+  }, [route.params, navigation]);
 
   // Crop image mapping - simplified to only mango for now
   const getCropImage = (cropName) => {

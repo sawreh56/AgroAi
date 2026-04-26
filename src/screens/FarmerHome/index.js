@@ -252,12 +252,6 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22
   },
-  cardWrapper: {
-    width: 300,
-    alignSelf: "center",
-    marginTop: 20,
-  },
-
 cardWrapper: {
   width: 310,
   height: 110,

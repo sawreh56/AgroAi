@@ -1,4 +1,4 @@
-import {ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity,TextInput, ScrollView, Alert, Platform} from "react-native";
+import {ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity,TextInput, ScrollView, Alert} from "react-native";
 import React, { useState } from "react";
 import SafeBlurView from "../../Components/SafeBlurView";
 import { useNavigation } from "@react-navigation/native";
@@ -20,8 +20,6 @@ const ExpertAccount = () => {
   const [expertiseError, setExpertiseError] = useState("");
   const [experienceError, setExperienceError] = useState("");
   const [bioError, setBioError] = useState("");
-
-  const baseUrl = Platform.OS === "android" ? "http://10.0.2.2:4000" : "http://localhost:4000";
 
   const handleRegister = () => {
     // clear previous

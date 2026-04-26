@@ -23,6 +23,7 @@ import DetectionResult from '../screens/DetectionResult'
 import Recommedation from '../screens/Recommedation'
 import CropRecommend from '../screens/CropRecommend'
 import FarmerTabs from '../Navigation/FarmerTabs';
+import ExpertTabs from '../Navigation/ExpertTabs';
 import DirectAgro from '../screens/DirectAgro';
 import MarketPrice from '../screens/MarketPrice';
 import ChatScreen from '../screens/ChatScreen';
@@ -36,7 +37,6 @@ import CommunityForum from '../screens/CommunityForum';
 
 const Stack = createNativeStackNavigator();
 const StackNavigation = () => {
-
   return (
 
     <NavigationContainer>
@@ -57,6 +57,11 @@ const StackNavigation = () => {
         <Stack.Screen name="ExpertAccount" component={ExpertAccount} />
         <Stack.Screen name="CongratulationFarmer" component={CongratulationFarmer} />
         <Stack.Screen name="CongratulationExprt" component={CongratulationExprt} />
+        {/* Role-based app entry points */}
+        <Stack.Screen name="FarmerApp" component={FarmerDrawer} />
+        <Stack.Screen name="ExpertApp" component={ExpertTabs} />
+
+        {/* Legacy routes (kept for internal navigation if needed) */}
         <Stack.Screen name="FarmerDrawer" component={FarmerDrawer} />
         <Stack.Screen name="FarmerTabs" component={FarmerTabs} />
         <Stack.Screen name="ExpetHome" component={ExpetHome} />

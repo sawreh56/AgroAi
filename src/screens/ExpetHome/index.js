@@ -214,8 +214,7 @@ const styles = StyleSheet.create({
     fontSize:24,
     fontWeight:"600",
     marginLeft:80,
-    marginTop:15,
-    fontWeight:"600"
+    marginTop:15
   },
   belll:{
     height:26,

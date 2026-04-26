@@ -39,7 +39,7 @@ const Leaf = ({ delay, x }) => {
     };
 
     animate();
-  }, []);
+  }, [delay, opacity, translateY]);
 
   return (
     <Animated.Image
@@ -104,7 +104,7 @@ const CongratulationFarmer = () => {
 
         <TouchableOpacity
           style={styles.createBtn}
-          onPress={() => navigation.navigate("FarmerTabs")}
+          onPress={() => navigation.replace("FarmerApp")}
         >
           <Text style={styles.createTxt}>Explore more Features</Text>
         </TouchableOpacity>

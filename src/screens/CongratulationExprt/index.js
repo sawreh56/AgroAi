@@ -19,37 +19,37 @@ const Leaf = ({ delay, x }) => {
   const translateY = useRef(new Animated.Value(-120)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
-  const start = () => {
-    translateY.setValue(-120);
-    opacity.setValue(0);
-
-    Animated.parallel([
-      Animated.timing(translateY, {
-        toValue: height + 120,
-        duration: 3500 + Math.random() * 2500,
-        delay,
-        useNativeDriver: true,
-      }),
-
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-      ]),
-    ]).start(() => start());
-  };
-
   useEffect(() => {
     // ⚡ INSTANT START (NO DELAY SYSTEM)
+    const start = () => {
+      translateY.setValue(-120);
+      opacity.setValue(0);
+
+      Animated.parallel([
+        Animated.timing(translateY, {
+          toValue: height + 120,
+          duration: 3500 + Math.random() * 2500,
+          delay,
+          useNativeDriver: true,
+        }),
+
+        Animated.sequence([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(opacity, {
+            toValue: 0,
+            duration: 3000,
+            useNativeDriver: true,
+          }),
+        ]),
+      ]).start(start);
+    };
+
     start();
-  }, []);
+  }, [delay, opacity, translateY]);
 
   return (
     <Animated.Image
@@ -122,7 +122,7 @@ const CongratulationExprt = () => {
 
         <TouchableOpacity
           style={styles.createBtn}
-          onPress={() => navigation.navigate("ExpetHome")}
+          onPress={() => navigation.replace("ExpertApp")}
         >
           <Text style={styles.createTxt}>Explore more Features</Text>
         </TouchableOpacity>

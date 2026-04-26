@@ -1,16 +1,29 @@
 import { Image, ImageBackground, StyleSheet } from 'react-native'
 import React, { useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
+import { useRole } from '../../context/RoleContext'
+import { ROLE_EXPERT, ROLE_FARMER } from '../../constants/roles'
 
 const SplashScreen = () => {
   const navigation = useNavigation()
+  const { role, isHydrating } = useRole()
   useEffect(() => {
+    if (isHydrating) return
+
     const timeoutId = setTimeout(() => {
+      if (role === ROLE_FARMER) {
+        navigation.replace('FarmerApp')
+        return
+      }
+      if (role === ROLE_EXPERT) {
+        navigation.replace('ExpertApp')
+        return
+      }
       navigation.replace('Onbording')
-    }, 2000)
+    }, 1200)
 
     return () => clearTimeout(timeoutId)
-  }, [navigation])
+  }, [navigation, role, isHydrating])
 
   return (
 

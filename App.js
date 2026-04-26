@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import StackNavigation from './src/Navigation/StackNavigation'
 import config from './src/config'
+import { RoleProvider } from './src/context/RoleContext'
 
 /*
   App entry: centralizes runtime config usage so keys come from `.env` via
@@ -17,7 +18,9 @@ const App = () => {
 
   return (
     <GestureHandlerRootView style={styles.root}>
-      <StackNavigation />
+      <RoleProvider>
+        <StackNavigation />
+      </RoleProvider>
     </GestureHandlerRootView>
   )
 }
