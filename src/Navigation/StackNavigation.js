@@ -27,7 +27,9 @@ import DirectAgro from '../screens/DirectAgro';
 import MarketPrice from '../screens/MarketPrice';
 import ChatScreen from '../screens/ChatScreen';
 import SellCrop from '../screens/SellCrop'
-// import FarmerDrawer from './FarmerDrawer';
+import FarmerDrawer from '../Navigation/FarmerDrawer';
+import  Crops from '../screens/Crops'; 
+import CommunityForum from '../screens/CommunityForum';
 // import BuyCrops from '../screens/'
 
 
@@ -55,7 +57,7 @@ const StackNavigation = () => {
         <Stack.Screen name="ExpertAccount" component={ExpertAccount} />
         <Stack.Screen name="CongratulationFarmer" component={CongratulationFarmer} />
         <Stack.Screen name="CongratulationExprt" component={CongratulationExprt} />
-        {/* <Stack.Screen name="FarmerHome" component={FarmerHome} /> */}
+        <Stack.Screen name="FarmerDrawer" component={FarmerDrawer} />
         <Stack.Screen name="FarmerTabs" component={FarmerTabs} />
         <Stack.Screen name="ExpetHome" component={ExpetHome} />
         <Stack.Screen name="DiseaseDetection" component={DiseaseDetection} />
@@ -66,8 +68,12 @@ const StackNavigation = () => {
         <Stack.Screen name="MarketPrice" component={MarketPrice} />
         <Stack.Screen name="ChatScreen" component={ChatScreen} />
         <Stack.Screen name="SellCrop" component={SellCrop} />
+        <Stack.Screen name="Crops" component={Crops} />
+        <Stack.Screen name="CommunityForum" component={CommunityForum} />
+
+
+
         {/* <Stack.Screen name="BuyCrops" component={BuyCrops} /> */}
-        {/* <Stack.Screen name="FarmerDrawer" component={FarmerDrawer} /> */}
 
 
 

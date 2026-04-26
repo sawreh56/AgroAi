@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground,TextInput, Alert } from "react-native";
 import React from "react";
-import SafeBlurView from "../../Components/SafeBlurView";
+import { BlurView } from "@react-native-community/blur";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 
@@ -9,8 +9,8 @@ const Guest = () => {
     const [name, setName] = useState("");
     const [location, setLocation] = useState("");
     const [activeTab, setActiveTab] = useState("guest");
-  const [nameError, setNameError] = useState("");
-  const [locationError, setLocationError] = useState("");
+    const [nameError, setNameError] = useState("");
+    const [locationError, setLocationError] = useState("");
   
   return (
     <ImageBackground
@@ -31,7 +31,7 @@ const Guest = () => {
 
          {/* Blur only in this box (Android-safe) */}
             <View style={styles.blurContainer}>
-                <SafeBlurView
+                <BlurView
                     style={styles.absoluteBlur}
                     blurType="dark"
                     blurAmount={1}

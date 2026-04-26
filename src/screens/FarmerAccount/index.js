@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import SafeBlurView from "../../Components/SafeBlurView";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { Scroll } from "lucide-react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 const FarmerAccount = () => {
   const navigation = useNavigation();
@@ -69,6 +71,7 @@ const FarmerAccount = () => {
   };
 
   return (
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
     <ImageBackground
       source={require("../../assets/Images/bg2.png")}
       style={styles.bg}
@@ -219,6 +222,7 @@ const FarmerAccount = () => {
         </View>
 
     </ImageBackground>
+    </ScrollView>
   );
 };
 

@@ -1,11 +1,10 @@
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View,TextInput, ScrollView } from 'react-native'
 import React from 'react'
-import { useNavigation } from '@react-navigation/native'
 import SafeBlurView from "../../Components/SafeBlurView";
 
+// FarmerDrawer
 
-const FarmerHome = () => {
-    const navigation= useNavigation()
+const FarmerHome = ({ navigation }) => {
   return (
    
   <View style={styles.container}>
@@ -22,10 +21,12 @@ const FarmerHome = () => {
 
         {/* TOP BAR */}
         <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <TouchableOpacity>
-            <Image style={styles.menuu} source={require("../../assets/Images/menu.png")} />
-          </TouchableOpacity>
-
+        <TouchableOpacity onPress={() =>navigation.replace('FarmerDrawer')}>
+  <Image
+    source={require("../../assets/Images/menu.png")}
+    style={styles.menuu}
+  />
+</TouchableOpacity>
           <TouchableOpacity>
             <Image style={styles.iconn} source={require("../../assets/Images/icon.png")} />
           </TouchableOpacity>
@@ -154,7 +155,7 @@ const FarmerHome = () => {
                 <Text style={styles.cardSub}>Connect with experts and other farmers.</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.btnSmall}>
+            <TouchableOpacity style={styles.btnSmall}onPress={() => navigation.navigate("CommunityForum")}>
               <Text style={styles.btnSmallText}>Join Now</Text>
             </TouchableOpacity>
           </View>
