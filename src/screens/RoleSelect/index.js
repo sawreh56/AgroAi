@@ -2,13 +2,11 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground } from
 import React from "react";
 import SafeBlurView from "../../Components/SafeBlurView";
 import { useNavigation } from "@react-navigation/native";
-import { useRole } from "../../context/RoleContext";
 import { ROLE_EXPERT, ROLE_FARMER } from "../../constants/roles";
 
 
 const RoleSelect = () => {
     const navigation=useNavigation()
-    const { setRole } = useRole()
   
   return (
     <ImageBackground
@@ -48,20 +46,14 @@ const RoleSelect = () => {
 
           <TouchableOpacity
             style={styles.btn}
-            onPress={async () => {
-              await setRole(ROLE_FARMER)
-              navigation.navigate("FarmerAccount")
-            }}
+            onPress={() => navigation.navigate("FarmerAccount", { role: ROLE_FARMER })}
           >
             <Text style={styles.btnText}>I am a Farmer</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.btn}
-            onPress={async () => {
-              await setRole(ROLE_EXPERT)
-              navigation.navigate("ExpertAccount")
-            }}
+            onPress={() => navigation.navigate("ExpertAccount", { role: ROLE_EXPERT })}
           >
             <Text style={styles.btnText}>I am an Expert</Text>
           </TouchableOpacity>

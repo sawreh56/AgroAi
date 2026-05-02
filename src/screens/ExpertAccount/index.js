@@ -1,11 +1,15 @@
 import {ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity,TextInput, ScrollView, Alert} from "react-native";
 import React, { useState } from "react";
 import SafeBlurView from "../../Components/SafeBlurView";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useRole } from "../../context/RoleContext";
+import { ROLE_EXPERT } from "../../constants/roles";
 
 const ExpertAccount = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const { setRole } = useRole();
   const [isChecked, setIsChecked] = useState(false);
 
   const [fullName, setFullName] = useState("");
@@ -75,6 +79,9 @@ const ExpertAccount = () => {
 
     if (hasError) return;
 
+    // Persist role only after successful signup flow.
+    const selectedRole = route.params?.role || ROLE_EXPERT;
+    setRole(selectedRole);
     navigation.navigate("CongratulationExprt");
   };
 

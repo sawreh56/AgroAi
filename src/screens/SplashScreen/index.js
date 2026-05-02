@@ -1,5 +1,5 @@
 import { Image, ImageBackground, StyleSheet } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useRole } from '../../context/RoleContext'
 import { ROLE_EXPERT, ROLE_FARMER } from '../../constants/roles'
@@ -7,22 +7,39 @@ import { ROLE_EXPERT, ROLE_FARMER } from '../../constants/roles'
 const SplashScreen = () => {
   const navigation = useNavigation()
   const { role, isHydrating } = useRole()
+  const hasNavigated = useRef(false)
   useEffect(() => {
-    if (isHydrating) return
-
     const timeoutId = setTimeout(() => {
+      if (hasNavigated.current) return
       if (role === ROLE_FARMER) {
+        hasNavigated.current = true
         navigation.replace('FarmerApp')
         return
       }
       if (role === ROLE_EXPERT) {
+        hasNavigated.current = true
         navigation.replace('ExpertApp')
         return
       }
+
+      // If we still don't have a role (or hydration is slow), continue to onboarding
+      // so the app never gets stuck on splash.
+      if (isHydrating) return
+
+      hasNavigated.current = true
       navigation.replace('Onbording')
     }, 1200)
 
-    return () => clearTimeout(timeoutId)
+    const hardFallbackId = setTimeout(() => {
+      if (hasNavigated.current) return
+      hasNavigated.current = true
+      navigation.replace('Onbording')
+    }, 3500)
+
+    return () => {
+      clearTimeout(timeoutId)
+      clearTimeout(hardFallbackId)
+    }
   }, [navigation, role, isHydrating])
 
   return (

@@ -14,6 +14,11 @@ export function RoleProvider({ children }) {
 
   useEffect(() => {
     let mounted = true;
+    const safetyTimer = setTimeout(() => {
+      // If storage hydration hangs for any reason, don't block app navigation.
+      if (mounted) setIsHydrating(false);
+    }, 1500);
+
     (async () => {
       const stored = await getStoredRole();
       if (mounted) {
@@ -23,6 +28,7 @@ export function RoleProvider({ children }) {
     })();
     return () => {
       mounted = false;
+      clearTimeout(safetyTimer);
     };
   }, []);
 

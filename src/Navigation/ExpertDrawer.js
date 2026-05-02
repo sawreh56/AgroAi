@@ -4,17 +4,16 @@ import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 // screens
-import FarmerTabs from './FarmerTabs';
-import MarketPrice from '../screens/MarketPrice';
+import ExpertTabs from './ExpertTabs';
 import ChatScreen from '../screens/ChatScreen';
-import Crops from '../screens/Crops';
+import CommunityForum from '../screens/CommunityForum';
 
 // custom drawer
 import CustomDrawerContent from './CustomDrawerContent';
 
 const Drawer = createDrawerNavigator();
 
-const FarmerDrawer = () => {
+const ExpertDrawer = () => {
   return (
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
@@ -39,7 +38,7 @@ const FarmerDrawer = () => {
         ),
         drawerType: 'front',
         drawerStyle: {
-          backgroundColor: '#7ADAA5', // optional background color
+          backgroundColor: '#7ADAA5', // Same as farmer for consistency
         },
         gestureEnabled: true,
         gestureResponseDistance: 100,
@@ -48,9 +47,10 @@ const FarmerDrawer = () => {
 
       <Drawer.Screen 
         name="HomeTabs" 
-        component={FarmerTabs}
+        component={ExpertTabs}
         options={{
           title: 'Home',
+          drawerLabel: 'Home',
           drawerIcon: ({ color, size }) => (
             <Icon name="home" color={color} size={size} />
           ),
@@ -58,34 +58,25 @@ const FarmerDrawer = () => {
       />
 
       <Drawer.Screen 
-        name="MarketPrice" 
-        component={MarketPrice}
+        name="ExpertCommunity" 
+        component={CommunityForum}
         options={{
-          title: 'Market Price',
+          title: 'Community',
+          drawerLabel: 'Community',
           drawerIcon: ({ color, size }) => (
-            <Icon name="pricetags" color={color} size={size} />
+            <Icon name="people" color={color} size={size} />
           ),
         }}
       />
 
       <Drawer.Screen 
-        name="Chat" 
+        name="ExpertChat" 
         component={ChatScreen}
         options={{
           title: 'Chat',
+          drawerLabel: 'Chat',
           drawerIcon: ({ color, size }) => (
             <Icon name="chatbubbles" color={color} size={size} />
-          ),
-        }}
-      />
-
-      <Drawer.Screen 
-        name="Crops" 
-        component={Crops}
-        options={{
-          title: 'Crops',
-          drawerIcon: ({ color, size }) => (
-            <Icon name="leaf" color={color} size={size} />
           ),
         }}
       />
@@ -94,4 +85,4 @@ const FarmerDrawer = () => {
   );
 };
 
-export default FarmerDrawer;
+export default ExpertDrawer;

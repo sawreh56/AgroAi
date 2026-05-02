@@ -29,6 +29,7 @@ import MarketPrice from '../screens/MarketPrice';
 import ChatScreen from '../screens/ChatScreen';
 import SellCrop from '../screens/SellCrop'
 import FarmerDrawer from '../Navigation/FarmerDrawer';
+import ExpertDrawer from '../Navigation/ExpertDrawer';
 import  Crops from '../screens/Crops'; 
 import CommunityForum from '../screens/CommunityForum';
 // import BuyCrops from '../screens/'
@@ -59,7 +60,7 @@ const StackNavigation = () => {
         <Stack.Screen name="CongratulationExprt" component={CongratulationExprt} />
         {/* Role-based app entry points */}
         <Stack.Screen name="FarmerApp" component={FarmerDrawer} />
-        <Stack.Screen name="ExpertApp" component={ExpertTabs} />
+        <Stack.Screen name="ExpertApp" component={ExpertDrawer} />
 
         {/* Legacy routes (kept for internal navigation if needed) */}
         <Stack.Screen name="FarmerDrawer" component={FarmerDrawer} />
