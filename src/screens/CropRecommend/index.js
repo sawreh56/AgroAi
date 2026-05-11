@@ -30,10 +30,36 @@ const CropRecommend = () => {
     }
   }, [route.params, navigation]);
 
-  // Crop image mapping - simplified to only mango for now
+  // Crop image mapping
   const getCropImage = (cropName) => {
-    // Default to mango image for all crops - you can add more images later
-    return require("../../assets/Images/mango.png");
+    const cropImages = {
+      'apple': require("../../assets/Crops images/Apple.png"),
+      'banana': require("../../assets/Crops images/banana.png"),
+      'blackgram': require("../../assets/Crops images/Blackgram(Mash).png"),
+      'chickpeas': require("../../assets/Crops images/chickpeas.jpg"),
+      'coconut': require("../../assets/Crops images/coconut.jpg"),
+      'coffee': require("../../assets/Crops images/coffee.jpg"),
+      'cotton': require("../../assets/Crops images/cotton.jpg"),
+      'grapes': require("../../assets/Crops images/grapes.png"),
+      'jute': require("../../assets/Crops images/jute.jpg"),
+      'kidney beans': require("../../assets/Crops images/Kidney beans (lobia).png"),
+      'lentil': require("../../assets/Crops images/Lentil (masoor).png"),
+      'mango': require("../../assets/Crops images/Mango.png"),
+      'maize': require("../../assets/Crops images/Mazie .jpg"),
+      'mothbeans': require("../../assets/Crops images/mothbeans(matki).jpg"),
+      'mungbean': require("../../assets/Crops images/mungbean (moong).jpg"),
+      'muskmelon': require("../../assets/Crops images/muskmelon.jpg"),
+      'orange': require("../../assets/Crops images/orange.png"),
+      'papaya': require("../../assets/Crops images/papaya.png"),
+      'pigeonpeas': require("../../assets/Crops images/pigeonpease.jpg"),
+      'pomegranate': require("../../assets/Crops images/Pomegranate.png"),
+      'rice': require("../../assets/Crops images/rice.jpg"),
+      'watermelon': require("../../assets/Crops images/watermelon.jpg"),
+    };
+
+    // Normalize crop name: lowercase and remove extra spaces
+    const normalizedName = cropName?.toLowerCase().trim();
+    return cropImages[normalizedName] || require("../../assets/Images/mango.png"); // Default to mango if not found
   };
 
   // Crop details mapping - simplified
@@ -135,9 +161,15 @@ const CropRecommend = () => {
             <View style={styles.topCropsBox}>
               <Text style={styles.topCropsTitle}>Top 5 Suitable Crops:</Text>
               {topCrops.map((crop, index) => (
-                <Text key={index} style={styles.topCropItem}>
-                  {index + 1}. {crop.charAt(0).toUpperCase() + crop.slice(1)}
-                </Text>
+                <View key={index} style={styles.topCropItem}>
+                  <Image
+                    source={getCropImage(crop)}
+                    style={styles.topCropImage}
+                  />
+                  <Text style={styles.topCropText}>
+                    {index + 1}. {crop.charAt(0).toUpperCase() + crop.slice(1)}
+                  </Text>
+                </View>
               ))}
             </View>
           )}
@@ -260,8 +292,21 @@ const styles = StyleSheet.create({
   },
 
   topCropItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 5,
+  },
+
+  topCropImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+
+  topCropText: {
     fontSize: 14,
-    marginVertical: 2,
+    flex: 1,
   },
 
   btn: {

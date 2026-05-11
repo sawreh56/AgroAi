@@ -7,12 +7,132 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
+  PermissionsAndroid,
+  Platform,
 } from "react-native";
-import {launchCamera} from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { api } from "../../api/client";
 
 const DiseaseDetection = () => {
     const navigation = useNavigation();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const requestCameraPermission = async () => {
+    if (Platform.OS !== 'android') return true;
+
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      {
+        title: 'Camera Permission',
+        message: 'AgroAI needs camera access to take a plant photo.',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'Allow',
+      },
+    );
+
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
+  };
+
+  const requestGalleryPermission = async () => {
+    if (Platform.OS !== 'android') return true;
+
+    const permission =
+      Platform.Version >= 33
+        ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
+        : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+
+    const granted = await PermissionsAndroid.request(permission, {
+      title: 'Photo Library Permission',
+      message: 'AgroAI needs gallery access to choose a plant photo.',
+      buttonNegative: 'Cancel',
+      buttonPositive: 'Allow',
+    });
+
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
+  };
+
+  const openCamera = async () => {
+    const hasPermission = await requestCameraPermission();
+    if (!hasPermission) {
+      Alert.alert('Permission Required', 'Camera permission is required to take a photo.');
+      return;
+    }
+
+    const options = {
+      mediaType: 'photo',
+      quality: 0.8,
+    };
+    launchCamera(options, (response) => {
+      if (response.didCancel) return;
+      if (response.errorMessage) {
+        Alert.alert('Error', response.errorMessage);
+        return;
+      }
+      if (response.assets && response.assets[0]) {
+        setSelectedImage(response.assets[0]);
+      }
+    });
+  };
+
+  const openGallery = async () => {
+    const hasPermission = await requestGalleryPermission();
+    if (!hasPermission) {
+      Alert.alert('Permission Required', 'Gallery permission is required to choose a photo.');
+      return;
+    }
+
+    const options = {
+      mediaType: 'photo',
+      quality: 0.8,
+    };
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) return;
+      if (response.errorMessage) {
+        Alert.alert('Error', response.errorMessage);
+        return;
+      }
+      if (response.assets && response.assets[0]) {
+        setSelectedImage(response.assets[0]);
+      }
+    });
+  };
+
+  const analyzeImage = async () => {
+    if (!selectedImage) {
+      Alert.alert('No Image', 'Please select an image first.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', {
+        uri: selectedImage.uri,
+        type: selectedImage.type || 'image/jpeg',
+        name: selectedImage.fileName || 'image.jpg',
+      });
+
+      console.log('Uploading image:', selectedImage.fileName);
+      const result = await api.upload('/api/predictions/crop/predict', formData);
+      
+      console.log('API Result:', JSON.stringify(result, null, 2));
+
+      if (!result) {
+        Alert.alert('Error', 'No response from server');
+        setLoading(false);
+        return;
+      }
+
+      navigation.navigate('DetectionResult', { result, image: selectedImage });
+    } catch (error) {
+      console.error('Analysis Error:', error);
+      const errorMessage = error?.message || 'Unable to analyze the image. Please try again.';
+      Alert.alert('Analysis Failed', errorMessage);
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -46,14 +166,14 @@ const DiseaseDetection = () => {
 
         {/* ---------- BUTTONS ---------- */}
         <View style={styles.row}>
-          <TouchableOpacity style={styles.circleBtn}>
+          <TouchableOpacity style={styles.circleBtn} onPress={openCamera}>
             <Image
               source={require("../../assets/Images/camera11.png")}
               style={styles.circleIcon}
             />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.circleBtn}>
+          <TouchableOpacity style={styles.circleBtn} onPress={openGallery}>
             <Image
               source={require("../../assets/Images/upload.png")}
               style={styles.circleIcon}
@@ -68,14 +188,20 @@ const DiseaseDetection = () => {
 
         {/* ---------- IMAGE PREVIEW BOX ---------- */}
         <View style={styles.imageBox}>
-          <Text style={styles.noImageText}>
-            {selectedImage ? "Image Selected" : "No image selected"}
-          </Text>
+          {selectedImage ? (
+            <Image 
+              source={{ uri: selectedImage.uri }} 
+              style={styles.previewImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <Text style={styles.noImageText}>No image selected</Text>
+          )}
         </View>
 
         {/* ---------- ANALYZE BUTTON ---------- */}
-        <TouchableOpacity style={styles.analyzeBtn}  onPress={() => navigation.navigate("DetectionResult")}>
-          <Text style={styles.analyzeText}>Analyze Image</Text>
+        <TouchableOpacity style={[styles.analyzeBtn, loading && styles.disabledBtn]} onPress={analyzeImage} disabled={loading}>
+          <Text style={styles.analyzeText}>{loading ? 'Analyzing...' : 'Analyze Image'}</Text>
         </TouchableOpacity>
 
         {/* ---------- RESULT SECTION ---------- */}
@@ -185,6 +311,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     opacity: 0.8,
   },
+  previewImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 12,
+    resizeMode: 'cover',
+  },
 
   /* ANALYZE BUTTON */
   analyzeBtn: {
@@ -193,6 +325,9 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: "center",
     marginTop: 25,
+  },
+  disabledBtn: {
+    backgroundColor: "#555",
   },
   analyzeText: {
     color: "#fff",

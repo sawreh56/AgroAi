@@ -6,281 +6,226 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  ImageBackground,
+  Linking,
 } from "react-native";
-import LinearGradient from "react-native-linear-gradient";
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from "@react-navigation/native";
 
-const categories = ["Alll", "Grains", "Fruits", "Vegetables"];
+const categories = ["All", "Grains", "Fruits", "Vegetables"];
 
-const data = [
-  {
-    name: "Wheat",
-    price: "PKR 3,200",
-    unit: "40kg bag",
-    change: "+5.2%",
-    up: true,
-    market: "Lahore Market",
-  },
-  {
-    name: "Basmati Rice",
-    price: "PKR 280",
-    unit: "Per kg",
-    change: "-1.8%",
-    up: false,
-    market: "Karachi Market",
-  },
-  {
-    name: "Tomato",
-    price: "PKR 120",
-    unit: "Per kg",
-    change: "+8.5%",
-    up: true,
-    market: "Islamabad Market",
-  },
-  {
-    name: "Onion",
-    price: "PKR 85",
-    unit: "Per kg",
-    change: "-3.2%",
-    up: false,
-    market: "Faisalabad Market",
-  },
-  {
-    name: "Sugar",
-    price: "PKR 140",
-    unit: "Per kg",
-    change: "+2.1%",
-    up: true,
-    market: "Multan Market",
-  },
-  {
-    name: "Mango (Chaunsa)",
-    price: "PKR 450",
-    unit: "Per dozen",
-    change: "-4.1%",
-    up: false,
-    market: "Sargodha Market",
-  },
+// Data mein icons aur specific colors add kar diye hain
+const marketData = [
+  { name: "Wheat", category: "Grains", price: "3,200", unit: "Per 40kg bag", change: "+5.2%", up: true, market: "Lahore Market", time: "2 hours ago", icon: "🌾", iconColor: "#F1C40F" },
+  { name: "Basmati Rice", category: "Grains", price: "280", unit: "Per kg", change: "-1.8%", up: false, market: "Karachi Market", time: "1 hour ago", icon: "🍚", iconColor: "#ECF0F1" },
+  { name: "Tomato", category: "Vegetables", price: "120", unit: "Per kg", change: "+8.5%", up: true, market: "Islamabad Market", time: "30 min ago", icon: "🍅", iconColor: "#E74C3C" },
+  { name: "Onion", category: "Vegetables", price: "85", unit: "Per kg", change: "-3.2%", up: false, market: "Faisalabad Market", time: "45 min ago", icon: "🧅", iconColor: "#D2B4DE" },
+  { name: "Potato", category: "Vegetables", price: "60", unit: "Per kg", change: "+1.2%", up: true, market: "Lahore Market", time: "10 min ago", icon: "🥔", iconColor: "#D4AC0D" },
+  { name: "Sugar", category: "Grains", price: "140", unit: "Per kg", change: "+2.1%", up: true, market: "Multan Market", time: "1 hour ago", icon: "🍬", iconColor: "#AED6F1" },
+  { name: "Apple", category: "Fruits", price: "250", unit: "Per kg", change: "+4.0%", up: true, market: "Quetta Market", time: "5 hours ago", icon: "🍎", iconColor: "#FF5E5E" },
+  { name: "Mango", category: "Fruits", price: "450", unit: "Per dozen", change: "-4.1%", up: false, market: "Sargodha Market", time: "20 min ago", icon: "🥭", iconColor: "#FFC300" },
+  { name: "Corn", category: "Grains", price: "2,100", unit: "Per 40kg", change: "+0.5%", up: true, market: "Sahiwal Market", time: "3 hours ago", icon: "🌽", iconColor: "#F4D03F" },
 ];
 
 export default function MarketPricesScreen() {
-  const [selectedCategory, setSelectedCategory] = useState("Grains");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
+
+  const filteredData = marketData.filter((item) => {
+    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        
-        {/* HEADER */}
-        <LinearGradient
-          colors={["#18332D", "#0E1F1C"]}
-          style={styles.header}
-        >
-          <Text style={styles.headerTitle}>Price for RYK Mandi</Text>
-          <Text style={styles.subTitle}>
-            Real-time agricultural commodity rates
-          </Text>
-
-          <TextInput
-            placeholder="Search crops, fruits, vegetables..."
-            placeholderTextColor="#aaa"
-            style={styles.search}
-          />
-        </LinearGradient>
-
-        {/* STATS BOX */}
-        <View style={styles.statsRow}>
-          <View style={styles.statBox}>
-            <Text style={styles.statTitle}>Today's Average</Text>
-            <Text style={styles.statValue}>PKR 2,450</Text>
-            <Text style={styles.statChange}>+2.4%</Text>
-          </View>
-
-          <View style={styles.statBox}>
-            <Text style={styles.statTitle}>Avg. Change</Text>
-            <Text style={[styles.statValue, { color: "#2ECC90" }]}>
-              +2.3%
-            </Text>
-          </View>
-        </View>
-
-        {/* CATEGORY FILTER */}
-        <View style={styles.categoryRow}>
-          {categories.map((cat) => (
-            <TouchableOpacity
-              key={cat}
-              style={[
-                styles.categoryBtn,
-                selectedCategory === cat && styles.activeCategory,
-              ]}
-              onPress={() => setSelectedCategory(cat)}
-            >
-              <Text
-                style={[
-                  styles.categoryText,
-                  selectedCategory === cat && { color: "#fff" },
-                ]}
-              >
-                {cat}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* PRICE CARDS (NOW TOUCHABLE) */}
-        {data.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.card}
-            activeOpacity={0.8}
-            onPress={() =>
-              navigation.navigate("PriceDetail", { item })
-            }
-          >
-            <View>
-              <Text style={styles.cropName}>{item.name}</Text>
-              <Text style={styles.unit}>{item.unit}</Text>
+      <ImageBackground 
+        source={require('../../assets/Images/BackGround.png')} 
+        style={styles.bgImage}
+      >
+        <View style={styles.darkOverlay}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 40}}>
+            
+            {/* TOP NAVIGATION */}
+            <View style={styles.navBar}>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Icon name="chevron-back" size={24} color="#fff" />
+              </TouchableOpacity>
+              <Text style={styles.navTitle}>Market Prices</Text>
+              <TouchableOpacity onPress={() => Linking.openURL("https://maps.google.com")} style={styles.locIcon}>
+                 <Icon name="location" size={18} color="#fff" />
+              </TouchableOpacity>
             </View>
 
-            <View style={{ alignItems: "flex-end" }}>
-              <Text style={styles.price}>{item.price}</Text>
-              <Text
-                style={{
-                  color: item.up ? "#2ECC90" : "#ff4d4d",
-                  fontSize: 12,
-                }}
-              >
-                {item.change}
-              </Text>
-              <Text style={styles.market}>{item.market}</Text>
+            {/* HEADER TEXT */}
+            <View style={styles.headerTextContainer}>
+              <Text style={styles.mainHeading}>Price for RYK Mandi</Text>
+              <Text style={styles.subHeading}>Real-time agricultural commodity rates</Text>
             </View>
-          </TouchableOpacity>
-        ))}
 
-      </ScrollView>
+            {/* SEARCH SECTION */}
+            <View style={styles.searchWrapper}>
+              <View style={styles.searchBar}>
+                <Icon name="search" size={20} color="#6E8C85" style={{marginLeft: 15}}/>
+                <TextInput
+                  placeholder="Search crops, fruits, vegetables..."
+                  placeholderTextColor="#6E8C85"
+                  style={styles.searchInput}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                />
+              </View>
+            </View>
+
+            {/* STATS ROW */}
+            <View style={styles.statsContainer}>
+              <View style={styles.statCard}>
+                <Text style={styles.statLabel}>Today's Average</Text>
+                <Icon name="arrow-up-circle" size={20} color="#2ECC71" style={styles.arrowPos}/>
+                <Text style={styles.statPrice}>PKR 2,450</Text>
+                <Text style={styles.statPercent}>+2.4% Today</Text>
+              </View>
+              <View style={styles.statCard}>
+                <Text style={styles.statLabel}>Avg. Change</Text>
+                <View style={styles.changeRow}>
+                  <Text style={styles.changeValue}>+2.3%</Text>
+                  <Icon name="trending-up" size={22} color="#2ECC71" />
+                </View>
+              </View>
+            </View>
+
+            {/* CATEGORY TABS */}
+            <View style={styles.tabContainer}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {categories.map((cat) => (
+                  <TouchableOpacity
+                    key={cat}
+                    style={[styles.tab, selectedCategory === cat && styles.activeTab]}
+                    onPress={() => setSelectedCategory(cat)}
+                  >
+                    <Text style={[styles.tabText, selectedCategory === cat && styles.activeTabText]}>
+                      {cat}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+
+            {/* DATA LISTING */}
+            <View style={{paddingHorizontal: 18}}>
+              {filteredData.map((item, index) => (
+                <View key={index} style={styles.itemCard}>
+                  <View style={styles.cardTop}>
+                    {/* Unique Icon Circle */}
+                    <View style={[styles.iconSquare, { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: item.iconColor, borderWidth: 1 }]}>
+                       <Text style={{fontSize: 22}}>{item.icon}</Text>
+                    </View>
+                    
+                    <View style={styles.itemInfo}>
+                      <Text style={styles.itemName}>{item.name}</Text>
+                      <Text style={styles.itemUnit}>{item.unit}</Text>
+                    </View>
+                    
+                    <View style={styles.itemPriceInfo}>
+                      <Text style={styles.itemPrice}>PKR {item.price}</Text>
+                      <Text style={[styles.itemChange, {color: item.up ? '#2ECC71' : '#E74C3C'}]}>
+                        {item.up ? '▲' : '▼'} {item.change}
+                      </Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.cardBottom}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Icon name="time-outline" size={12} color="#6E8C85" />
+                        <Text style={styles.updateText}> {item.time}</Text>
+                    </View>
+                    <Text style={styles.marketText}>{item.market}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+
+          </ScrollView>
+        </View>
+      </ImageBackground>
     </View>
   );
 }
 
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#0D1817",
-  },
+  container: { flex: 1, backgroundColor: "#040D0B" },
+  bgImage: { flex: 1 },
+  darkOverlay: { flex: 1, backgroundColor: "rgba(4, 13, 11, 0.95)" }, // Mazeed dark overlay
+  
+  navBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 50 },
+  navTitle: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+  locIcon: { backgroundColor: '#2ECC71', padding: 8, borderRadius: 50 },
 
-  header: {
-    padding: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
+  headerTextContainer: { alignItems: 'center', marginTop: 20 },
+  mainHeading: { color: "#fff", fontSize: 26, fontWeight: "bold" },
+  subHeading: { color: "#6E8C85", fontSize: 14, marginTop: 5 },
 
-  headerTitle: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-    marginTop: 10,
+  searchWrapper: { paddingHorizontal: 18, marginTop: 25 },
+  searchBar: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: "#0A1F1C", // Darker field
+    borderRadius: 15, 
+    borderWidth: 1, 
+    borderColor: '#1B3D36',
+    height: 55
   },
+  searchInput: { flex: 1, color: "#fff", paddingHorizontal: 12, fontSize: 15 },
 
-  subTitle: {
-    color: "#aaa",
-    fontSize: 12,
-    marginTop:10,
-    marginBottom: 12,
+  statsContainer: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 18, marginTop: 20 },
+  statCard: { 
+    width: '48%', 
+    backgroundColor: '#0A1F1C', 
+    borderRadius: 15, 
+    padding: 15, 
+    borderWidth: 1.2, 
+    borderColor: '#1B3D36' 
   },
+  statLabel: { color: "#6E8C85", fontSize: 12 },
+  statPrice: { color: "#fff", fontSize: 20, fontWeight: "bold", marginTop: 8 },
+  statPercent: { color: "#2ECC71", fontSize: 11, marginTop: 2 },
+  changeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 },
+  changeValue: { color: "#2ECC71", fontSize: 20, fontWeight: "bold" },
+  arrowPos: { position: 'absolute', right: 12, top: 12 },
 
-  search: {
-    backgroundColor: "#163A34",
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    color: "#fff",
-  },
+  tabContainer: { paddingLeft: 18, marginVertical: 25 },
+  tab: { paddingVertical: 10, paddingHorizontal: 22, borderRadius: 30, backgroundColor: '#0A1F1C', marginRight: 12, borderWidth: 1, borderColor: '#1B3D36' },
+  activeTab: { backgroundColor: '#1B3D36', borderColor: '#2ECC71' },
+  tabText: { color: "#6E8C85", fontSize: 14 },
+  activeTabText: { color: "#fff", fontWeight: "bold" },
 
-  statsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 15,
+  itemCard: { 
+    backgroundColor: "#0A1F1C", // Pehle se dark card
+    borderRadius: 18, 
+    padding: 16, 
+    marginBottom: 15, 
+    borderWidth: 1.5, 
+    borderColor: '#162E29', // Visible border
+    elevation: 5
   },
-
-  statBox: {
-    backgroundColor: "#163A34",
-    padding: 15,
-    borderRadius: 12,
-    width: "48%",
+  cardTop: { flexDirection: 'row', alignItems: 'center' },
+  iconSquare: { width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 12 },
+  itemInfo: { flex: 1, marginLeft: 15 },
+  itemName: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+  itemUnit: { color: "#6E8C85", fontSize: 13, marginTop: 2 },
+  itemPriceInfo: { alignItems: 'flex-end' },
+  itemPrice: { color: "#fff", fontSize: 19, fontWeight: "bold" },
+  itemChange: { fontSize: 13, fontWeight: "bold", marginTop: 2 },
+  
+  cardBottom: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    marginTop: 15, 
+    paddingTop: 12, 
+    borderTopWidth: 1, 
+    borderTopColor: '#1B3D36' 
   },
-
-  statTitle: {
-    color: "#aaa",
-    fontSize: 12,
-  },
-
-  statValue: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "700",
-    marginTop: 4,
-  },
-
-  statChange: {
-    color: "#2ECC90",
-    fontSize: 12,
-    marginTop: 2,
-  },
-
-  categoryRow: {
-    flexDirection: "row",
-    paddingHorizontal: 15,
-    marginBottom: 10,
-  },
-
-  categoryBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    borderRadius: 20,
-    backgroundColor: "#163A34",
-    marginRight: 8,
-  },
-
-  activeCategory: {
-    backgroundColor: "#2ECC90",
-  },
-
-  categoryText: {
-    color: "#aaa",
-    fontSize: 13,
-  },
-
-  card: {
-    backgroundColor: "#163A34",
-    marginHorizontal: 15,
-    marginVertical: 6,
-    padding: 15,
-    borderRadius: 12,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  cropName: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "600",
-  },
-
-  unit: {
-    color: "#aaa",
-    fontSize: 12,
-    marginTop: 3,
-  },
-
-  price: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "700",
-  },
-
-  market: {
-    color: "#aaa",
-    fontSize: 11,
-    marginTop: 2,
-  },
+  updateText: { color: "#6E8C85", fontSize: 11 },
+  marketText: { color: "#6E8C85", fontSize: 11, fontWeight: '500' }
 });

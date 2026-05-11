@@ -1,398 +1,181 @@
-import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View,TextInput, ScrollView } from 'react-native'
-import React from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import Icon from 'react-native-vector-icons/Ionicons'; 
 import SafeBlurView from "../../Components/SafeBlurView";
 
-
 const ExpetHome = () => {
-    const NavigationContainer= useNavigation()
+  const navigation = useNavigation(); 
+  const [search, setSearch] = useState("");
+
   return (
-   
-  <View style={styles.container}>
-    <ImageBackground
-      style={styles.bg}
-      source={require("../../assets/Images/bg2.png")}
-    >
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 80 }}
-      >
-
-        {/* TOP BAR */}
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <TouchableOpacity>
-            <Image style={styles.menuu} source={require("../../assets/Images/menu.png")} />
-          </TouchableOpacity>
-
-          <TouchableOpacity>
-            <Image style={styles.iconn} source={require("../../assets/Images/icon.png")} />
-          </TouchableOpacity>
-
-
-          <Text style={styles.tittle}>Home</Text>
-
-          <TouchableOpacity>
-            <Image style={styles.belll} source={require("../../assets/Images/bell.png")} />
-          </TouchableOpacity>
-        </View>
-
-        {/* TEXT */}
-        <Text style={styles.welcm}>Hello, Dr. Irfan!</Text>
-        <Text style={styles.text1}>Ready to empower farmers today?</Text>
-
-        {/* SEARCH */}
-        <View style={styles.searchBox}>
-          <TextInput placeholder="Search" placeholderTextColor="#7f7f7f" style={styles.searchInput} />
+    <View style={styles.container}>
+      <ImageBackground style={styles.bg} source={require("../../assets/Images/BackGround.png")}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
           
-          <TouchableOpacity>
-            <Image source={require("../../assets/Images/search.png")} style={styles.searchIcon} />
-          </TouchableOpacity>
-
-        </View>
-
-        {/* ALL CARDS */}
-      
-        <View style={styles.cardWrapper}>
-          <View style={styles.blurBox}>
-                <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
-                <View style={styles.row}>
-                    <Image
-                        source={require("../../assets/Images/chats.png")}
-                        style={styles.cardIcon}
-                    />
-                    <Text style={styles.cardTitle}>New Farmer Queries</Text>
-                </View>
-
-                <Text style={styles.cardText}>
-                Farmers are waiting your valuable insights.
-                </Text>
-
-                <TouchableOpacity style={styles.button}>
-                    <Text style={styles.btnText}>View & Answer</Text>
-                </TouchableOpacity>   
+          {/* Header Section */}
+          <View style={styles.topBar}>
+            <TouchableOpacity onPress={() => navigation.openDrawer()}>
+              <Icon name="menu" size={30} color="#fff" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Home</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
+              <Image style={styles.bellIcon} source={require("../../assets/Images/bell.png")} />
+            </TouchableOpacity>
           </View>
+
+          <View style={styles.welcomeSection}>
+            <Text style={styles.welcm}>Hello, Dr. Irfan!</Text>
+            <Text style={styles.text1}>Ready to empower farmers today?</Text>
           </View>
+
+          <View style={styles.searchBox}>
+            <TextInput 
+              placeholder="Search" 
+              placeholderTextColor="#7f7f7f" 
+              style={styles.searchInput}
+              value={search}
+              onChangeText={setSearch}
+            />
+            <TouchableOpacity>
+              <Icon name="search-outline" size={20} color="#7ADAA5" />
+            </TouchableOpacity>
+          </View>
+
+          {/* 1. New Farmer Queries Card */}
+          <View style={styles.cardWrapper}>
+            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={10} />
             <View style={styles.cardContent}>
+              <View style={styles.row}>
+                <Image source={require("../../assets/Images/expertChat.png")} style={styles.localIcon} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.cardTitle}>New Farmer Queries</Text>
+                  <Text style={styles.cardText}>Farmers are waiting your valuable insights.</Text>
+                </View>
+              </View>
+              <TouchableOpacity 
+                style={styles.button} 
+                onPress={() => navigation.navigate('QueriesScreen')}
+              >
+                <Text style={styles.btnText}>View & Answer</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
+          {/* 2. Your Impact Card (Stats) */}
+          <View style={styles.cardWrapper}>
+            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={10} />
+            <View style={styles.cardContent}>
+              <TouchableOpacity 
+                style={styles.row} 
+                onPress={() => navigation.navigate('Impact1')}
+              >
+                <Image source={require("../../assets/Images/YourImpact.png")} style={styles.localIcon} />
+                <Text style={styles.cardTitle}>Your Impact</Text>
+              </TouchableOpacity>
+              
 
-
-
-        <View style={styles.cardWrapper}>
-          <View style={styles.blurBox}>
-            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
-
-
-            <View style={styles.row}>
-            <Image
-              source={require("../../assets/Images/states.png")}
-              style={styles.cardIcon}
-            />
-            <Text style={styles.cardTitle}>Your Impact</Text>
-          </View>
-
-            <View style={{flexDirection:"row"}}>
-
-            <View style={{flexDirection:"column",marginLeft:30,marginTop:10}}>
-            <Text style={{color:'#fff',fontSize:12,}}>Rating: 4.8/5</Text>
-            <Text style={{color:'#fff',fontSize:12,marginTop:10}}>Answered: 150</Text>
-            </View>
-
-            <View style={{height:60,width:1,backgroundColor:"#fff",marginLeft:40}}></View>
-
-            <View style={{flexDirection:"column",marginLeft:30,marginTop:10}}>
-            <Text style={{color:'#fff',fontSize:12,}}>Answered              150</Text>
-            <Text style={{color:'#fff',fontSize:12,marginTop:10}}>Farmers Helped:    75</Text>
-            </View>
-
-            </View>
-          
-            </View>
-              <View style={styles.cardContent}></View>
-            </View>
-
-
-
-
-        <View style={styles.cardWrapper}>
-          <View style={styles.blurBox}>
-            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
-             <View style={styles.row}>
-            <Image
-              source={require("../../assets/Images/market.png")}
-              style={styles.cardIcon1}
-            />
-            <Text style={styles.cardTitle}>Market Advisory</Text>
-          </View>
-
-          <Text style={styles.cardText}>
-            Review crop listing and advice on market trends.
-          </Text>
-
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.btnText}>View Market Trends</Text>
-          </TouchableOpacity>
-          </View>
-          <View style={styles.cardContent}></View>
-        </View>
-
-
-
-
-
-
-
-        <View style={styles.cardWrapper}>
-          <View style={styles.blurBox}>
-            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={5} />
-
-             <View style={styles.row}>
-            <Image
-              source={require("../../assets/Images/book.png")}
-              style={styles.cardIcon1}
-            />
-            <Text style={styles.cardTitle}>Knowledge Hub</Text>
-          </View>
-
-          <Text style={styles.cardText}>
-            Share articles or create new guides for farmers.
-          </Text>
-
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.btnText}>+ New Articles</Text>
-          </TouchableOpacity>
+              
+              <View style={styles.statsContainer}>
+                <View style={styles.statCol}>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statLabel}>Rating: 4.8/5</Text>
+                    <Icon name="chevron-down" size={14} color="#fff" />
                   </View>
-          <View style={styles.cardContent}></View>
-        </View>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statLabel}>Answered</Text>
+                    <Text style={styles.statValue}>150</Text>
+                  </View>
+                </View>
+                <View style={styles.verticalDivider} />
+                <View style={styles.statCol}>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statLabel}>Answered</Text>
+                    <Text style={styles.statValue}>150</Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statLabel}>Farmers Helped</Text>
+                    <Text style={styles.statValue}>75</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
 
 
+          {/* 3. Market Advisory Card */}
+          <View style={styles.cardWrapper}>
+            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={10} />
+            <View style={styles.cardContent}>
+              <View style={styles.row}>
+                <Image source={require("../../assets/Images/advisory.png")} style={styles.localIcon} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.cardTitle}>Market Advisory</Text>
+                  <Text style={styles.cardText}>Review crop listing and advice on market trends.</Text>
+                </View>
+              </View>
+              <TouchableOpacity 
+                style={styles.button} 
+                onPress={() => navigation.navigate('MarketAvisor1')}
+              >
+                <Text style={styles.btnText}>View Market Trends</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-      </ScrollView>
-    </ImageBackground>
-  </View>
-);
+          {/* 4. Knowledge Hub Card */}
+          <View style={styles.cardWrapper}>
+            <SafeBlurView style={styles.blurFill} blurType="dark" blurAmount={10} />
+            <View style={styles.cardContent}>
+              <View style={styles.row}>
+                <Image source={require("../../assets/Images/HUB.png")} style={styles.localIcon} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.cardTitle}>Knowledge Hub</Text>
+                  <Text style={styles.cardText}>Share articles or create new guides for farmers.</Text>
+                </View>
+              </View>
+              {/* Is button par KnowledgeHub screen ki navigation hai */}
+              <TouchableOpacity 
+                style={styles.button} 
+                onPress={() => navigation.navigate('KnowledgeHub')}
+              >
+                <Text style={styles.btnText}>+ New Articles</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
+        </ScrollView>
+      </ImageBackground>
+    </View>
+  );
 }
-
-export default  ExpetHome
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  bg:{
-    flex:1,
-    resizeMode:"cover"
-    
-  },
-  menuu:{
-    height:20,
-    width:19,
-    marginLeft:15,
-    marginTop:15
-  },
-  iconn:{
-    height:22,
-    width:22,
-    marginLeft:10,
-    marginTop:15
-    
-  },
-  pointt:{
-    height:16,
-    width:16,
-    marginLeft:5,
-    marginTop:8
-  },
-  point250:{
-    color:"#fff",
-    margin:4,
-    fontSize:9,
-    marginTop:9
-  },
-  tittle:{
-    color:"#fff",
-    fontSize:24,
-    fontWeight:"600",
-    marginLeft:80,
-    marginTop:15
-  },
-  belll:{
-    height:26,
-    width:26,
-    marginLeft:130,
-    marginTop:25
-    
-  },
-  welcm:{
-    color:"#fff",
-    fontSize:23,
-    fontWeight:"900",
-    marginLeft:110,
-    marginTop:40
-  },
-  text1:{
-    color:"#fff",
-    fontSize:15,
-    fontWeight:"400",
-    marginLeft:70,
-    marginTop:10
-  },
-  searchBox: {
-    marginTop: 50,
-    backgroundColor: "#fff",
-    height: 45,
-    width:310,
-    borderRadius: 15,
-    paddingHorizontal: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft:35
-  },
-  searchInput: {
-    flex: 1,
-    color:"black",
-    fontWeight:"100"
-  },
-  searchIcon: {
-    width: 22,
-    height: 22
-  },
-  // cardWrapper: {
-  //   width: 300,
-  //   alignSelf: "center",
-  //   marginTop: 40,
-  // },
+  bg: { flex: 1 },
+  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 20 },
+  headerTitle: { color: "#fff", fontSize: 20, fontWeight: "600" },
+  bellIcon: { height: 25, width: 23 },
+  welcomeSection: { alignItems: 'center', marginTop: 20 },
+  welcm: { color: "#fff", fontSize: 22, fontWeight: "700" },
+  text1: { color: "#fff", fontSize: 14, opacity: 0.9, marginLeft: 42 },
+  searchBox: { marginTop: 20, backgroundColor: "#fff", height: 45, marginHorizontal: 25, borderRadius: 25, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", marginBottom: 20 },
+  searchInput: { flex: 1, color: "black", fontSize: 14 },
+  cardWrapper: { marginHorizontal: 20, marginTop: 15, borderRadius: 15, overflow: "hidden", borderWidth: 1, borderColor: "#7ADAA5" },
+  blurFill: { ...StyleSheet.absoluteFillObject },
+  cardContent: { padding: 15 },
+  row: { flexDirection: "row", alignItems: 'flex-start', marginBottom: 12 },
+  localIcon: { width: 28, height: 28, marginRight: 12, tintColor: '#7ADAA5' },
+  cardTitle: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+  cardText: { color: "#fff", fontSize: 12, marginTop: 4, width: '95%' },
+  button: { backgroundColor: "#7ADAA5", paddingVertical: 10, borderRadius: 12, alignItems: "center", width: '60%', alignSelf: 'center', marginTop: 5 },
+  btnText: { color: "#fff", fontWeight: "600", fontSize: 13 },
+  statsContainer: { flexDirection: 'row', paddingVertical: 10 },
+  statCol: { flex: 1 },
+  statItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, paddingHorizontal: 5 },
+  statLabel: { color: '#fff', fontSize: 12 },
+  statValue: { color: '#fff', fontSize: 12, fontWeight: '700' },
+  verticalDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.5)', height: '100%', marginHorizontal: 10 },
+});
 
-cardWrapper: {
-  width: 310,
-  height: 110,
-  alignSelf: "center",
-  marginTop: 10,
-  borderRadius: 15,
-  overflow: "hidden",
-  position: "relative",
-},
-
-blurBox: {
-  ...StyleSheet.absoluteFillObject,
-  borderRadius: 15,
-  overflow: "hidden",
-  borderWidth: 1,
-  borderColor: "#ffffff50",
-  
-},
-
-blurFill: {
-  ...StyleSheet.absoluteFillObject,
-},
-
-cardContent: {
-  flex: 1,
-  borderRadius: 15,
-//   padding: 20,
-  
-},
-
-topRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-},
-
-  topIcon: { 
-    width: 32,
-    height: 32,
-    tintColor: "#fff"
-},
-
-homeText: {
-    color: "#fff", 
-    fontSize: 18,
-    fontWeight: "600" 
-},
-
-  hello: { 
-    color: "#fff", 
-    fontSize: 23, 
-    fontWeight: "700", 
-    marginTop: 18 
-
-},
-  subtitle: { 
-    color: "#fff", 
-    opacity: 0.9 
-},
-  /* BODY */
-
-  card: {
-    backgroundColor: "rgba(255,255,255,0.07)",
-    borderRadius: 14,
-    padding: 18,
-    borderColor: "rgba(255,255,255,0.12)",
-    borderWidth: 1,
-    marginBottom: 18,
-  },
-
-  
-  cardIcon: {
-    width: 22, 
-    height: 22,
-    tintColor: "#7ADAA5",
-    marginLeft:10,
-    marginTop:10
- },
-
- cardIcon1: {
-    width: 18, 
-    height: 18,
-    tintColor: "#7ADAA5",
-    marginLeft:10,
-    marginTop:10
- },
-
-  cardTitle: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-    marginLeft: 15,
-  },
-  cardText: { color: "#fff", opacity: 0.8, marginLeft:50,fontSize:12},
-
-  row: { flexDirection: "row", alignItems: "center" },
-
-  rowBetween: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-  },
-
-  smallText: { color: "#fff", opacity: 0.75 ,fontSize:12,},
-
-  button: {
-    backgroundColor: "#7ADAA5",
-    paddingVertical: 8,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-    height:30,
-    width:140,
-    marginLeft:80
-  },
-  btnText: { color: "#fff", fontWeight: "700",fontSize:12 },
-
-  /* BOTTOM TAB */
-  bottomTab: {
-    height: 60,
-    backgroundColor: "#fff",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  tabIcon: { width: 26, height: 26, tintColor: "#7ADAA5" },
-
-
-
-
-  
-  
-})
+export default ExpetHome;

@@ -1,12 +1,23 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground, TextInput } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground, TextInput, Alert } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import SafeBlurView from "../../Components/SafeBlurView";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
+import { api } from "../../api/client";
+import { setStoredEmail } from "../../services/userStorage";
+import { useRole } from "../../context/RoleContext";
+import { ROLE_FARMER, ROLE_EXPERT } from "../../constants/roles";
 
 const Otp = () => {
     const [timerCount, setTimer] = useState(60);
+    const [otpError, setOtpError] = useState("");
     const navigation = useNavigation();
+    const route = useRoute();
+    const { setRole } = useRole();
+    const email = route.params?.email || "";
+    const role = route.params?.role || null;
+    const isNewRegistration = route.params?.isNewRegistration || false;
+    const bypassMode = route.params?.bypassMode || false;
     const [otp, setOtp] = useState(["", "", "", ""]);
        const inputRefs = useRef([]);
 
@@ -42,9 +53,68 @@ const Otp = () => {
         return () => clearInterval(interval);
     }, [timerCount]); // [timerCount] likhna zaroori hai taake ye dubara chale
 
-    const handleResend = () => {
-        if (timerCount === 0) {
-            setTimer(60); // Timer reset ho gaya
+    const handleResend = async () => {
+        if (timerCount !== 0) return;
+        if (!email) {
+            Alert.alert('Resend Failed', 'Email not available for resend.');
+            return;
+        }
+
+        setTimer(60);
+        try {
+            await api.post('/api/auth/login', { email });
+        } catch (error) {
+            const message = error?.message || 'Unable to resend OTP. Please try again.';
+            Alert.alert('Resend Failed', message);
+        }
+    };
+
+    const handleVerifyOtp = async () => {
+        setOtpError("");
+        const code = otp.join("").trim();
+
+        if (!email) {
+            Alert.alert('Verification Failed', 'Email is missing from the verification flow.');
+            return;
+        }
+
+        if (code.length < 4) {
+            setOtpError('Enter the full 4-digit OTP.');
+            return;
+        }
+
+        try {
+            // 🔧 BYPASS MODE - Accept any OTP
+            if (!bypassMode) {
+                await api.post('/api/auth/verify_otp', { email, otp: code });
+            }
+            
+            await setStoredEmail(email);
+            
+            // Set role AFTER successful OTP verification
+            if (role === ROLE_FARMER) {
+                await setRole(ROLE_FARMER);
+                // If new registration, show congratulation screen; otherwise go directly to home
+                if (isNewRegistration) {
+                    navigation.navigate("CongratulationFarmer");
+                } else {
+                    navigation.replace("FarmerApp");
+                }
+            } else if (role === ROLE_EXPERT) {
+                await setRole(ROLE_EXPERT);
+                // If new registration, show congratulation screen; otherwise go directly to home
+                if (isNewRegistration) {
+                    navigation.navigate("CongratulationExprt");
+                } else {
+                    navigation.replace("ExpertApp");
+                }
+            } else {
+                // If no role was captured, go to Guest
+                navigation.navigate("Guest");
+            }
+        } catch (error) {
+            const message = error?.message || 'OTP is invalid or expired.';
+            setOtpError(message);
         }
     };
     // -------------------------------------------------------
@@ -86,8 +156,17 @@ const Otp = () => {
 
                     </View>
 
+                    {/* 🔧 BYPASS MODE INDICATOR */}
+                    {bypassMode && (
+                        <View style={{ backgroundColor: 'rgba(122, 218, 165, 0.3)', paddingVertical: 6, paddingHorizontal: 10, borderRadius: 6, marginVertical: 8 }}>
+                            <Text style={{ color: '#7ADAA5', fontSize: 11, textAlign: 'center', fontWeight: '600' }}>
+                                ✓ Dev Mode Active - Any OTP accepted
+                            </Text>
+                        </View>
+                    )}
+
                     <Text style={styles.subtitle}>We've sent a 4-digit code to</Text>
-                    <Text style={styles.subtitleBold}>your email</Text>
+                    <Text style={styles.subtitleBold}>{email || 'your email'}</Text>
 
                     {/* OTP BOXES */}
                     <View style={styles.inputContainer}>
@@ -130,8 +209,9 @@ const Otp = () => {
                         )}
                     </View>
 
-                    <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("Guest")}>
-                        <Text style={styles.btnText}>Send OTP</Text>
+{otpError ? <Text style={styles.errorText}>{otpError}</Text> : null}
+                    <TouchableOpacity style={styles.btn} onPress={handleVerifyOtp}>
+                        <Text style={styles.btnText}>Verify OTP</Text>
                     </TouchableOpacity>
 
                 </View>
@@ -253,5 +333,11 @@ const styles = StyleSheet.create({
         color: "white", 
         fontSize: 16, 
         fontWeight: "700" 
+    },
+    errorText: {
+        color: '#ff6b6b',
+        fontSize: 12,
+        textAlign: 'center',
+        marginBottom: 10,
     },
 });

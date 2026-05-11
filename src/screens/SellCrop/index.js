@@ -1,241 +1,155 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  ImageBackground,
-  StatusBar,
-  ScrollView,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, Image, ScrollView, Alert, Linking } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
-const SellCrop = () => {
-  const navigation = useNavigation();
+const SellCrop = ({ navigation }) => {
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [cropName, setCropName] = useState("");
+  const [variety, setVariety] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const openCamera = () => {
+    launchCamera({ mediaType: 'photo', quality: 0.7 }, (res) => {
+      if (res.assets) setSelectedImage(res.assets[0]);
+    });
+  };
+
+  const openGallery = () => {
+    launchImageLibrary({ mediaType: 'photo', quality: 0.7 }, (res) => {
+      if (res.assets) setSelectedImage(res.assets[0]);
+    });
+  };
+
+  const openMaps = () => {
+    const url = "https://www.google.com/maps";
+    Linking.openURL(url).catch(() => Alert.alert("Error", "Maps nahi khul raha"));
+  };
+
+  const handlePost = () => {
+    if (!selectedImage || !cropName || !phoneNumber) {
+      Alert.alert("Missing Information", "Please provide photo, name, and phone number.");
+      return;
+    }
+    navigation.navigate("CropListing", { 
+      imageUri: selectedImage.uri,
+      name: cropName,
+      variety: variety || "A Grade Premium",
+      phone: phoneNumber,
+      sellerName: "Alishba" 
+    });
+  };
 
   return (
-    <ImageBackground
-      source={require("../../assets/Images/bg2.png")} // 🌿 your leaf background image
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <StatusBar barStyle="light-content" />
+    <View style={styles.container}>
+      <ImageBackground source={require("../../assets/Images/bg2.png")} style={styles.bg}>
+        <ScrollView contentContainerStyle={{ padding: 20 }}>
+          
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Icon name="chevron-back" size={24} color="#fff" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Sell My Crops</Text>
+            <TouchableOpacity style={styles.listingsBtn}>
+              <Text style={styles.listText}>Listings</Text>
+            </TouchableOpacity>
+          </View>
 
-      <ScrollView contentContainerStyle={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" size={26} color="#fff" />
+          <View style={styles.inputCard}>
+            <Text style={styles.label}>Crop Information</Text>
+            <TextInput style={styles.inputField} placeholder="Input title" placeholderTextColor="#555" value={cropName} onChangeText={setCropName} />
+          </View>
+
+          <View style={styles.inputCard}>
+            <Text style={styles.label}>Variety/ Grade</Text>
+            <TextInput style={styles.inputField} placeholder="Keep it clean..." placeholderTextColor="#555" value={variety} onChangeText={setVariety} />
+          </View>
+
+          {/* CROP PHOTOS SECTION - Preview aur Icons dono saath */}
+          <View style={styles.inputCard}>
+            <Text style={styles.label}>Crop Photos</Text>
+            <Text style={styles.subLabel}>(Recommended)</Text>
+            
+            <View style={styles.photoContainer}>
+              {/* Agar image select ho toh ye box icons ke upar nazar aaye ga */}
+              {selectedImage && (
+                <View style={styles.imageBoxAbove}>
+                  <Image source={{ uri: selectedImage.uri }} style={styles.smallPreview} />
+                  <TouchableOpacity style={styles.miniDelete} onPress={() => setSelectedImage(null)}>
+                    <Icon name="close-circle" size={20} color="red" />
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {/* Icons hamesha nazar aayenge (As per your request) */}
+              <View style={styles.photoActions}>
+                <View style={styles.actionItem}>
+                  <TouchableOpacity style={styles.circleIcon} onPress={openCamera}>
+                    <Icon name="camera" size={30} color="#fff" />
+                  </TouchableOpacity>
+                  <Text style={styles.actionText}>Take Photo</Text>
+                </View>
+                <View style={styles.actionItem}>
+                  <TouchableOpacity style={styles.circleIcon} onPress={openGallery}>
+                    <Icon name="cloud-upload" size={30} color="#fff" />
+                  </TouchableOpacity>
+                  <Text style={styles.actionText}>Upload Photo</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.inputCard}>
+            <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                <Text style={styles.label}>Contact Number</Text>
+                <TouchableOpacity onPress={openMaps} style={styles.locationTag}><Text style={styles.locText}>Location</Text></TouchableOpacity>
+            </View>
+            <TextInput 
+              style={styles.inputField} 
+              placeholder="+92 3xx xxxxxxx" 
+              placeholderTextColor="#555"
+              value={phoneNumber} 
+              onChangeText={setPhoneNumber} 
+              keyboardType="phone-pad" 
+            />
+          </View>
+
+          <TouchableOpacity style={styles.mainPostBtn} onPress={handlePost}>
+            <Text style={styles.mainPostText}>Post Listings</Text>
           </TouchableOpacity>
 
-          <Text style={styles.headerTitle}>Sell My Crops</Text>
-
-          <TouchableOpacity style={styles.listingBtn}>
-            <Text style={styles.listingText}>Listings</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Crop Information */}
-        <View style={styles.card}>
-          <Text style={styles.title}>Crop Information</Text>
-          <TextInput
-            placeholder="input title"
-            placeholderTextColor="#000"
-            style={styles.input}
-          />
-        </View>
-
-        {/* Variety Grade */}
-        <View style={styles.card}>
-          <Text style={styles.title}>Variety/ Grade</Text>
-          <TextInput
-            placeholder="Keep it clear...."
-            placeholderTextColor="#000"
-            style={styles.input}
-          />
-        </View>
-
-        {/* Crop Photos */}
-        <View style={styles.card}>
-          <Text style={styles.title}>Crop Photos</Text>
-          <Text style={styles.subText}>(Recommended)</Text>
-
-          <View style={styles.photoRow}>
-            <TouchableOpacity style={styles.circleBtn}>
-              <Icon name="camera-outline" size={28} color="#fff" />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.circleBtn}>
-              <Icon name="cloud-upload-outline" size={28} color="#fff" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.photoLabelRow}>
-            <Text style={styles.photoLabel}>Take Photo</Text>
-            <Text style={styles.photoLabel}>Upload Photo</Text>
-          </View>
-        </View>
-
-        {/* Contact Number */}
-        <View style={styles.card}>
-          <View style={styles.contactHeader}>
-            <Text style={styles.title}>Contact Number</Text>
-
-            <TouchableOpacity style={styles.locationBtn}>
-              <Text style={styles.locationText}>Location</Text>
-            </TouchableOpacity>
-          </View>
-
-          <TextInput
-            placeholder="+92 3XX XXXX77"
-            placeholderTextColor="#000"
-            style={styles.input}
-            keyboardType="phone-pad"
-          />
-        </View>
-
-        {/* Post Button */}
-        <TouchableOpacity style={styles.postBtn}>
-          <Text style={styles.postText}>Post Listings</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </ImageBackground>
+        </ScrollView>
+      </ImageBackground>
+    </View>
   );
 };
 
-export default SellCrop;
-
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-  },
+  container: { flex: 1, backgroundColor: '#000' },
+  bg: { flex: 1 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 40, marginBottom: 20 },
+  headerTitle: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  listingsBtn: { backgroundColor: '#7ADAA5', paddingHorizontal: 15, paddingVertical: 5, borderRadius: 8 },
+  listText: { color: '#fff', fontSize: 12, fontWeight: 'bold' },
+  inputCard: { backgroundColor: '#fff', borderRadius: 12, padding: 15, marginBottom: 15 },
+  label: { fontSize: 18, fontWeight: 'bold', color: '#000' },
+  subLabel: { fontSize: 12, color: '#888', marginBottom: 10 },
+  inputField: { backgroundColor: '#A3B1AA', borderRadius: 10, padding: 12, color: '#000', marginTop: 5 },
+  
+  photoContainer: { marginTop: 5, alignItems: 'center' },
+  imageBoxAbove: { width: '100%', height: 120, borderRadius: 10, backgroundColor: '#f0f0f0', marginBottom: 15, overflow: 'hidden', borderWidth: 1, borderColor: '#ddd' },
+  smallPreview: { width: '100%', height: '100%', resizeMode: 'cover' },
+  miniDelete: { position: 'absolute', top: 5, right: 5, backgroundColor: '#fff', borderRadius: 10 },
 
-  container: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 40,
-    marginBottom: 20,
-  },
-
-  headerTitle: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "600",
-  },
-
-  listingBtn: {
-    backgroundColor: "#7ED6A3",
-    paddingHorizontal: 18,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-
-  listingText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-
-  card: {
-    backgroundColor: "#F2F2F2",
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 20,
-  },
-
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    marginBottom: 15,
-    color: "#000",
-  },
-
-  subText: {
-    color: "#888",
-    marginTop: -10,
-    marginBottom: 15,
-    fontSize: 16,
-    fontWeight: "400",
-
-  },
-
-  input: {
-    backgroundColor: "#95A59B",
-    borderRadius: 15,
-    padding: 15,
-    fontSize: 16,
-    color: "#000",
-    fontWeight: "100",
-
-  },
-
-  photoRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginVertical: 15,
-  },
-
-  circleBtn: {
-    backgroundColor: "#7ED6A3",
-    height: 70,
-    width: 70,
-    borderRadius: 45,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  photoLabelRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-
-  photoLabel: {
-    fontSize: 14,
-    color: "#000",
-    marginLeft:35
-  },
-
-  contactHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 15,
-  },
-
-  locationBtn: {
-    backgroundColor: "#7ED6A3",
-    paddingHorizontal: 18,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-
-  locationText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-
-  postBtn: {
-    backgroundColor: "#7ED6A3",
-    paddingVertical: 18,
-    borderRadius: 40,
-    alignItems: "center",
-    marginTop: 10,
-  },
-
-  postText: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject, // pura background cover kare
-    backgroundColor: "rgba(0,0,0,0.5)", // 50% dark overlay
-  },
+  photoActions: { flexDirection: 'row', justifyContent: 'space-around', width: '100%' },
+  actionItem: { alignItems: 'center' },
+  circleIcon: { backgroundColor: '#7ADAA5', width: 65, height: 65, borderRadius: 35, justifyContent: 'center', alignItems: 'center' },
+  actionText: { fontSize: 10, color: '#000', marginTop: 5 },
+  
+  locationTag: { backgroundColor: '#7ADAA5', paddingHorizontal: 12, borderRadius: 12, height: 25, justifyContent: 'center' },
+  locText: { color: '#fff', fontSize: 10, fontWeight: 'bold' },
+  mainPostBtn: { backgroundColor: '#7ADAA5', padding: 15, borderRadius: 30, alignItems: 'center', marginTop: 10 },
+  mainPostText: { color: '#fff', fontSize: 20, fontWeight: 'bold' }
 });
+
+export default SellCrop;

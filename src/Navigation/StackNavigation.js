@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { NavigationContainer } from '@react-navigation/native'
 import SplashScreen from '../screens/SplashScreen';
 import RoleSelect from '../screens/RoleSelect/index';
-// import OnbordingMain from '../screens/OnbordingMain'
 import Onbording from '../screens/Onbording';
 import Onbording2 from '../screens/Onbording2';
 import Onbording3 from '../screens/Onbording3';
@@ -32,7 +31,24 @@ import FarmerDrawer from '../Navigation/FarmerDrawer';
 import ExpertDrawer from '../Navigation/ExpertDrawer';
 import  Crops from '../screens/Crops'; 
 import CommunityForum from '../screens/CommunityForum';
-// import BuyCrops from '../screens/'
+import RewardsScreen from '../screens/RewardsScreen';
+import Notification from '../screens/Notification';
+import Help from '../screens/Help';
+import Setting from '../screens/Setting';
+import PointHistory from '../screens/PointHistory';
+import BuyCrops from '../screens/BuyCrops';
+import Trending from '../screens/Trending';
+import MyQuestion from '../screens/MyQuestion';
+import Experts from '../screens/Experts';
+import CropListing from '../screens/CropListing';
+import ChatWithExpert from '../screens/ChatWithExpert';
+import ExpertChats from '../screens/ExpertChats';
+import ChatWithFarmers from '../screens/ChatWithFarmers';
+import KnowledgeHub from '../screens/KnowledgeHub';
+import CreateArticle from '../screens/CreateArticle';
+import MarketAvisor1 from '../screens/MarketAvisor1';
+import Impact1 from '../screens/Impact1';
+import MarketAdvisoryTab from '../screens/MarketAdvisoryTab';
 
 
 
@@ -45,7 +61,6 @@ const StackNavigation = () => {
 
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="RoleSelect" component={RoleSelect} />
-        {/* <Stack.Screen name="OnbordingMain" component={OnbordingMain} /> */}
         <Stack.Screen name="Onbording" component={Onbording} />
         <Stack.Screen name="Onbording2" component={Onbording2} />
         <Stack.Screen name="Onbording3" component={Onbording3} />
@@ -58,11 +73,8 @@ const StackNavigation = () => {
         <Stack.Screen name="ExpertAccount" component={ExpertAccount} />
         <Stack.Screen name="CongratulationFarmer" component={CongratulationFarmer} />
         <Stack.Screen name="CongratulationExprt" component={CongratulationExprt} />
-        {/* Role-based app entry points */}
         <Stack.Screen name="FarmerApp" component={FarmerDrawer} />
         <Stack.Screen name="ExpertApp" component={ExpertDrawer} />
-
-        {/* Legacy routes (kept for internal navigation if needed) */}
         <Stack.Screen name="FarmerDrawer" component={FarmerDrawer} />
         <Stack.Screen name="FarmerTabs" component={FarmerTabs} />
         <Stack.Screen name="ExpetHome" component={ExpetHome} />
@@ -76,10 +88,25 @@ const StackNavigation = () => {
         <Stack.Screen name="SellCrop" component={SellCrop} />
         <Stack.Screen name="Crops" component={Crops} />
         <Stack.Screen name="CommunityForum" component={CommunityForum} />
+        <Stack.Screen name="RewardsScreen" component={RewardsScreen} />
+        <Stack.Screen name="Notification" component={Notification} />
+        <Stack.Screen name="Help" component={Help} />
+        <Stack.Screen name="Setting" component={Setting} />
+        <Stack.Screen name="PointHistory" component={PointHistory} />
+        <Stack.Screen name="BuyCrops" component={BuyCrops} />
+        <Stack.Screen name="Trending" component={Trending} />
+        <Stack.Screen name="MyQuestion" component={MyQuestion} />
+        <Stack.Screen name="Experts" component={Experts} /> 
+        <Stack.Screen name="CropListing" component={CropListing} />
+        <Stack.Screen name="ChatWithExpert" component={ChatWithExpert} />
+        <Stack.Screen name="ExpertChats" component={ExpertChats} />
+        <Stack.Screen name="ChatWithFarmers" component={ChatWithFarmers} />
+        <Stack.Screen name="KnowledgeHub" component={KnowledgeHub} />
+        <Stack.Screen name="CreateArticle" component={CreateArticle} />
+        <Stack.Screen name="MarketAvisor1" component={MarketAvisor1} />
+        <Stack.Screen name="Impact1" component={Impact1} />
+        <Stack.Screen name="MarketAdvisoryTab" component={MarketAdvisoryTab} />
 
-
-
-        {/* <Stack.Screen name="BuyCrops" component={BuyCrops} /> */}
 
 
 

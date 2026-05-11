@@ -7,7 +7,7 @@ import FarmerHome from '../screens/FarmerHome';
 import DirectAgro from '../screens/DirectAgro';
 import MarketPrice from '../screens/MarketPrice';
 import ChatScreen from '../screens/ChatScreen';
-import { launchCamera } from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 const Tab = createBottomTabNavigator();
 const EmptyScreen = () => <View style={{ flex: 1, backgroundColor: 'transparent' }} />;
@@ -17,7 +17,7 @@ const FarmerTabs = () => {
   const activeColor = "#7ADAA5";
   const inactiveOpacity = 0.4;
 
-  // --- SMART CAMERA FUNCTION START ---
+  // --- CAMERA FUNCTION ---
   const openCamera = async () => {
     console.log("Camera Button Pressed!");
 
@@ -46,8 +46,12 @@ const FarmerTabs = () => {
 
     const options = {
       mediaType: 'photo',
-      quality: 1,
+      quality: 0.8,
+      maxWidth: 1000,
+      maxHeight: 1000,
+      cameraType: 'back',
       saveToPhotos: true,
+      includeBase64: false,
     };
 
     launchCamera(options, (response) => {
@@ -63,7 +67,85 @@ const FarmerTabs = () => {
       }
     });
   };
-  // --- SMART CAMERA FUNCTION END ---
+
+  // --- GALLERY FUNCTION ---
+  const openGallery = async () => {
+    console.log("Gallery Button Pressed!");
+
+    // Android ke liye runtime permission check
+    if (Platform.OS === 'android') {
+      try {
+        const galleryPermission =
+          Platform.Version >= 33
+            ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
+            : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+        const granted = await PermissionsAndroid.request(
+          galleryPermission,
+          {
+            title: "Photo Library Permission",
+            message: "App ko gallery se photos access krne ke liye ijazat chahiye",
+            buttonNeutral: "Baad Mein",
+            buttonNegative: "Mana Karein",
+            buttonPositive: "Theek Hai",
+          }
+        );
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert("Permission Error", "Aap ne photo library ki ijazat nahi di.");
+          return;
+        }
+      } catch (err) {
+        console.warn(err);
+        return;
+      }
+    }
+
+    const options = {
+      mediaType: 'photo',
+      quality: 0.8,
+      maxWidth: 1000,
+      maxHeight: 1000,
+      includeBase64: false,
+    };
+
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled gallery');
+      } else if (response.errorCode) {
+        console.log('Gallery Error: ', response.errorMessage);
+        Alert.alert("Error", "Gallery nahi khul sak. Permission check karein.");
+      } else {
+        const source = response.assets[0].uri;
+        console.log("Gallery Photo URI: ", source);
+        Alert.alert("Success", "Photo select ho gayi!");
+      }
+    });
+  };
+
+  // --- SHOW PICKER OPTIONS ---
+  const showImageOptions = () => {
+    Alert.alert(
+      'Photo Capture',
+      'Choose an option to upload photo',
+      [
+        {
+          text: 'Take Photo',
+          onPress: openCamera,
+          style: 'default',
+        },
+        {
+          text: 'Choose from Gallery',
+          onPress: openGallery,
+          style: 'default',
+        },
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancelled'),
+          style: 'cancel',
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   return (
     <Tab.Navigator
@@ -111,13 +193,13 @@ const FarmerTabs = () => {
           tabBarButton: () => (
             <TouchableOpacity 
               activeOpacity={0.8} 
-              onPress={openCamera} 
+              onPress={showImageOptions} 
               style={styles.centerBtnContainer}
             >
               <View style={styles.centerBtn}>
                 <Image 
                   source={require("../assets/Images/camera.png")} 
-                  style={{ width: 28, height: 28, tintColor: '#7ADAA5' }} 
+                  style={{ width: 31, height: 28, tintColor: '#7ADAA5' }} 
                 />
               </View>
             </TouchableOpacity>

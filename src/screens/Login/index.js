@@ -1,43 +1,83 @@
-import {StyleSheet,Text,View,Image,TouchableOpacity,ImageBackground,TextInput,Alert,} from "react-native";
-import React, { useState } from "react";
+import {StyleSheet,Text,View,Image,TouchableOpacity,ImageBackground,TextInput,Alert, ActivityIndicator,} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import SafeBlurView from "../../Components/SafeBlurView";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
+import { api } from "../../api/client";
 
 const Login = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const role = route.params?.role || null;
+  const registeredEmail = route.params?.email || "";
   const [activeTab, setActiveTab] = useState("login");
-  const [identifier, setIdentifier] = useState(""); // email or phone
+  const [identifier, setIdentifier] = useState(registeredEmail); // email
   const [identifierError, setIdentifierError] = useState("");
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [devMode, setDevMode] = useState(false);
+  const sendOtpLockedRef = useRef(false);
 
   const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
-  const isValidPhone = (phone) => {
-    const digits = phone.replace(/\D/g, "");
-    return /^[0-9]{7,15}$/.test(digits);
-  };
+  useEffect(() => {
+    if (registeredEmail) {
+      setIdentifier(registeredEmail);
+    }
+  }, [registeredEmail]);
 
-  const handleSendOtp = () => {
+  const handleSendOtp = async () => {
+    if (sendOtpLockedRef.current) return;
+    sendOtpLockedRef.current = true;
+
     // clear previous
     setIdentifierError("");
 
     if (!identifier.trim()) {
       setIdentifierError("This field is required.");
+      sendOtpLockedRef.current = false;
       return;
     }
 
-    if (identifier.includes("@")) {
-      if (!isValidEmail(identifier)) {
-        setIdentifierError("Enter a valid email address.");
-        return;
-      }
-    } else {
-      if (!isValidPhone(identifier)) {
-        setIdentifierError("Enter a valid phone number (7-15 digits).");
-        return;
-      }
+    if (!isValidEmail(identifier)) {
+      setIdentifierError("Enter a valid email address.");
+      sendOtpLockedRef.current = false;
+      return;
     }
 
-    navigation.navigate("Otp");
+    setIsSendingOtp(true);
+    try {
+      const normalizedEmail = identifier.trim().toLowerCase();
+      
+      // 🔧 BYPASS MODE - Skip API call and go directly to OTP screen
+      if (devMode) {
+        navigation.navigate("Otp", { 
+          email: normalizedEmail, 
+          role: role || "farmer",
+          isNewRegistration: !!role,
+          bypassMode: true
+        });
+      } else {
+        const response = await api.post(
+          '/api/auth/login',
+          { email: normalizedEmail },
+          { timeoutMs: 25000 },
+        );
+        // Capture the role from the login API response
+        const roleFromResponse = response?.user_type || response?.role || response?.data?.user_type || response?.data?.role || role;
+        navigation.navigate("Otp", { 
+          email: normalizedEmail, 
+          role: roleFromResponse,
+          isNewRegistration: !!role // If role was passed from registration, it's a new user
+        });
+      }
+    } catch (error) {
+      const message = error?.message === 'Request timed out. Please try again.'
+        ? 'OTP server is taking too long to respond. Please try again in a few seconds.'
+        : error?.message || 'Unable to send OTP. Please try again.';
+      Alert.alert('Login Failed', message);
+    } finally {
+      sendOtpLockedRef.current = false;
+      setIsSendingOtp(false);
+    }
   };
 
   return (
@@ -106,13 +146,13 @@ const Login = () => {
           </View>
 
           <Text style={styles.title}>Login to Account</Text>
-          <Text style={styles.text1}>Enter registered phone number to</Text>
-          <Text style={styles.text2}>login your account.</Text>
+          <Text style={styles.text1}>Enter registered email to</Text>
+          <Text style={styles.text2}>login to your account.</Text>
 
           {/* Input */}
           <View style={styles.inputBox}>
             <TextInput
-              placeholder="Email or phone"
+              placeholder="Email"
               placeholderTextColor="black"
               style={styles.input}
               value={identifier}
@@ -132,9 +172,27 @@ const Login = () => {
             </View>
           </View>
 
+          {/* 🔧 DEV MODE TOGGLE */}
+          <TouchableOpacity 
+            onPress={() => setDevMode(!devMode)}
+            style={{ marginVertical: 10, paddingHorizontal: 10, backgroundColor: devMode ? 'rgba(122, 218, 165, 0.3)' : 'rgba(255,255,255,0.1)', paddingVertical: 8, borderRadius: 6 }}
+          >
+            <Text style={{ color: '#fff', fontSize: 12, textAlign: 'center' }}>
+              {devMode ? '✓ Dev Mode ON (OTP Bypass Enabled)' : 'Dev Mode OFF'}
+            </Text>
+          </TouchableOpacity>
+
           {/* Button */}
-          <TouchableOpacity style={styles.btn} onPress={handleSendOtp}>
-            <Text style={styles.btnText}>Send OTP</Text>
+          <TouchableOpacity
+            style={[styles.btn, isSendingOtp && styles.disabledBtn]}
+            onPress={handleSendOtp}
+            disabled={isSendingOtp}
+          >
+            {isSendingOtp ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.btnText}>Send OTP</Text>
+            )}
           </TouchableOpacity>
 
           <Text style={styles.orText}>Or</Text>
@@ -290,6 +348,10 @@ const styles = StyleSheet.create({
     marginTop: 40,
     alignSelf: "center",
 
+  },
+
+  disabledBtn: {
+    opacity: 0.7,
   },
 
   btnText: {

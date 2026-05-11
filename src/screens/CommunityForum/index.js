@@ -1,204 +1,177 @@
-import React from 'react';
-import { StyleSheet, View, Text, ImageBackground, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
-import { Home, BarChart2, ShoppingCart, MessageCircle, User, Plus, ChevronLeft, Eye } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  ImageBackground,
+  StatusBar,
+} from 'react-native';
 
 const CommunityForum = () => {
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+  const navigation = useNavigation();
+  const [activeTab, setActiveTab] = useState('Recent');
+
+  const tabs = ['Recent', 'Trending', 'My Questions', 'Experts'];
+
+  // --- Render Functions ---
+
+  const renderRecentOrTrending = () => (
+    <View style={styles.card}>
+      <View style={styles.userRow}>
+        <Image source={require('../../assets/Images/AhmedProfile.png')} style={styles.avatar} />
+        <View style={styles.userText}>
+          <Text style={styles.userName}>Ahmad Khan</Text>
+          <Text style={styles.timeText}>2 hours ago</Text>
+        </View>
+      </View>
+      <Text style={styles.qTitle}>My wheat crop leaves are turning{"\n"}yellow! What to do?</Text>
+      <Text style={styles.qDesc}>Started seeing this days ago, spreading fast.{"\n"}Worried about my yield...</Text>
       
-      {/* Background Image */}
-      <ImageBackground 
-        source={require("../../assets/Images/bg2.png")} // Dark leaf background
-        style={styles.backgroundImage}
-      >
-        <SafeAreaView style={styles.overlay}>
-          
-          {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity><ChevronLeft color="white" size={28} /></TouchableOpacity>
-            <Text style={styles.headerTitle}>Community Forum</Text>
-            <TouchableOpacity style={styles.addButton}><Plus color="#4CAF50" size={24} /></TouchableOpacity>
-          </View>
+      {/* Views aur Answers Text Fix */}
+      <View style={styles.statsCol}>
+        <Text style={styles.statsText}>👁️ 13 Views</Text>
+        <Text style={styles.statsText}>3 Answers</Text>
+      </View>
 
-          {/* Filter Tabs */}
-          <View style={styles.tabsContainer}>
-            <TouchableOpacity style={[styles.tab, styles.activeTab]}><Text style={styles.activeTabText}>Recent</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Trending</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>My Questions</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Experts</Text></TouchableOpacity>
-          </View>
-
-          {/* Post Card */}
-          <View style={styles.card}>
-            <View style={styles.userInfo}>
-              <View style={styles.avatarPlaceholder}>
-                <User color="#A9A9A9" size={30} />
-              </View>
-              <View>
-                <Text style={styles.userName}>Ahmad Khan</Text>
-                <Text style={styles.timeText}>2 hours ago</Text>
-              </View>
-            </View>
-
-            <Text style={styles.postTitle}>My wheat crop leaves are turning yellow! What to do?</Text>
-            <Text style={styles.postDescription}>
-              Started seeing this days ago, spreading fast. Worried about my yield...
-            </Text>
-
-            <View style={styles.cardFooter}>
-              <View style={styles.tag}><Text style={styles.tagText}>#Disease</Text></View>
-              <View style={styles.statsContainer}>
-                <View style={styles.statItem}>
-                  <Eye color="#A9A9A9" size={16} />
-                  <Text style={styles.statText}> 13 views</Text>
-                </View>
-                <Text style={styles.statText}>3 Answers</Text>
-                <TouchableOpacity style={styles.viewBtn}><Text style={styles.viewBtnText}>View Answers</Text></TouchableOpacity>
-              </View>
-            </View>
-          </View>
-
-        </SafeAreaView>
-      </ImageBackground>
-
-       
+      <View style={styles.btnRow}>
+        <TouchableOpacity style={styles.tag}><Text style={styles.btnText}>#Disease</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.mainBtn}><Text style={styles.btnText}>View Answers</Text></TouchableOpacity>
+      </View>
     </View>
+  );
+
+  const renderMyQuestions = () => (
+    <View style={styles.card}>
+      <View style={styles.headerRow}>
+        <Text style={styles.qTitle}>My wheat crop leaves are turning{"\n"}yellow! What to do?</Text>
+        <View style={styles.actionIcons}>
+           {/* Touchable Icons for Edit and Delete */}
+           <TouchableOpacity onPress={() => console.log('Edit')} style={styles.iconBtn}>
+             <Text style={{fontSize: 18}}>✏️</Text>
+           </TouchableOpacity>
+           <TouchableOpacity onPress={() => console.log('Delete')} style={[styles.iconBtn, {marginLeft: 10}]}>
+             <Text style={{fontSize: 18}}>🗑️</Text>
+           </TouchableOpacity>
+        </View>
+      </View>
+      <Text style={styles.qDesc}>Started seeing this days ago, spreading fast.{"\n"}Worried about my yield...</Text>
+      
+      <View style={styles.btnRow}>
+        <TouchableOpacity style={styles.tag}><Text style={styles.btnText}>#Disease</Text></TouchableOpacity>
+        <View style={styles.statsCol}>
+          <Text style={styles.statsText}>👁️ 13 Views</Text>
+          <Text style={styles.statsText}>3 Answers</Text>
+        </View>
+      </View>
+      
+      {/* Expert Answered as Touchable */}
+      <TouchableOpacity style={[styles.tag, {backgroundColor: '#999', alignSelf: 'flex-start', marginTop: 10}]}>
+        <Text style={styles.btnText}>Expert Answered</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderExperts = () => (
+    <View style={styles.card}>
+      <View style={styles.userRow}>
+        <Image source={require('../../assets/Images/AhmedProfile.png')} style={styles.avatar} />
+        <View style={styles.userText}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '80%'}}>
+            <Text style={styles.userName}>Dr. Irfan Malik</Text>
+            <Text style={{color: '#66cc99', fontSize: 12}}>Online ●</Text>
+          </View>
+          <Text style={styles.timeText}>Crop Disease Specialist</Text>
+          <Text style={styles.timeText}>4.9 ⭐</Text>
+        </View>
+      </View>
+      <Text style={[styles.qDesc, {marginVertical: 10}]}>Leading the fight against common{"\n"}crop diseases.</Text>
+      
+      <View style={styles.btnRow}>
+        {/* View Profile with Icon */}
+        <TouchableOpacity style={[styles.mainBtn, {backgroundColor: '#FFF', borderWidth: 1, borderColor: '#66cc99', flexDirection: 'row', alignItems: 'center'}]}>
+          <Text style={{marginRight: 5}}>👁️</Text>
+          <Text style={[styles.btnText, {color: '#66cc99'}]}>View Profile</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.mainBtn}>
+          <Text style={styles.btnText}>Ask Questions</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  return (
+    <ImageBackground source={require('../../assets/Images/BackGround.png')} style={styles.bg}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="light-content" />
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image source={require('../../assets/Images/backarrow.png')} style={styles.iconBack} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Community Forum</Text>
+          <TouchableOpacity>
+            <Image source={require('../../assets/Images/plus.png')} style={styles.iconPlus} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.tabBar}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {tabs.map((tab) => (
+              <TouchableOpacity
+                key={tab}
+                onPress={() => setActiveTab(tab)}
+                style={[styles.tabBtn, activeTab === tab ? styles.tabActive : styles.tabInactive]}
+              >
+                <Text style={{ color: activeTab === tab ? '#FFF' : '#666', fontWeight: 'bold' }}>{tab}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        <ScrollView contentContainerStyle={styles.scrollArea}>
+          {activeTab === 'Recent' && renderRecentOrTrending()}
+          {activeTab === 'Trending' && renderRecentOrTrending()}
+          {activeTab === 'My Questions' && renderMyQuestions()}
+          {activeTab === 'Experts' && renderExperts()}
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1, 
-    backgroundColor: '#000' 
-  },
-  backgroundImage: {
-     flex: 1, 
-     resizeMode: 'cover' 
-    },
-  overlay: { 
-    flex: 1, 
-    backgroundColor: 'rgba(0,0,0,0.5)', 
-    paddingHorizontal: 15 
-  },
-  header: { 
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center', 
-    marginTop: 10 
-  },
-  headerTitle: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold'
-   },
-  addButton: { 
-    backgroundColor: 'white', 
-    borderRadius: 15,
-    padding: 2
-   },
-  tabsContainer: {
-    flexDirection: 'row',
-    marginTop: 20, 
-    justifyContent: 'space-between' 
-  },
-  tab: {
-    backgroundColor: 'white',
-    paddingVertical: 8,
-    paddingHorizontal: 12, 
-    borderRadius: 10 
-  },
-  activeTab: { 
-    backgroundColor: '#75E6A3' 
-  },
-  tabText: {
-    color: '#888',
-    fontWeight: '600',
-    fontSize: 12 
-  },
-  activeTabText: {
-    color: 'white', 
-    fontWeight: 'bold',
-    fontSize: 12 
-  },
-  card: { 
-    backgroundColor: 'white', 
-    borderRadius: 10,
-    padding: 15,
-    marginTop: 30 
-  },
-  userInfo: { 
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15 
-  },
-  avatarPlaceholder: { 
-    width: 50, 
-    height: 50,
-    borderRadius: 10, 
-    backgroundColor: '#E0F7EF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10 
-  },
-  userName: {
-     fontWeight: 'bold', 
-     fontSize: 16
-    },
-  timeText: {
-     color: '#A9A9A9', 
-     fontSize: 12 
-    },
-  postTitle: { 
-    fontWeight: 'bold',
-    fontSize: 15, 
-    marginBottom: 5 
-  },
-  postDescription: { 
-    color: '#444',
-    fontSize: 13,
-    lineHeight: 18 },
-    cardFooter: {
-    marginTop: 15 
-  },
-  tag: {
-    backgroundColor: '#75E6A3',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10, 
-    paddingVertical: 4, 
-    borderRadius: 8 
-  },
-  tagText: {
-    color: 'white',
-    fontSize: 12, 
-    fontWeight: 'bold' 
-  },
-  statsContainer: {
-    alignItems: 'flex-end', 
-    marginTop: -20 
-  },
-  statItem: { 
-    flexDirection: 'row', 
-    alignItems: 'center' 
-  },
-  statText: { 
-    color: '#A9A9A9', 
-    fontSize: 11, 
-    marginBottom: 2 
-  },
-  viewBtn: { 
-    backgroundColor: '#75E6A3', 
-    paddingHorizontal: 15, 
-    paddingVertical: 8, 
-    borderRadius: 10, 
-    marginTop: 5 
-  },
-  viewBtnText: { 
-    color: 'white', 
-    fontWeight: 'bold', 
-    fontSize: 12 
-  },
- 
+  bg: { flex: 1 },
+  container: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20 },
+  headerTitle: { color: '#FFF', fontSize: 20, fontWeight: 'bold' },
+  iconBack: { width: 22, height: 22, tintColor: '#FFF' },
+  iconPlus: { width: 35, height: 35 },
+  tabBar: { paddingLeft: 15, marginBottom: 20 },
+  tabBtn: { paddingHorizontal: 18, paddingVertical: 8, borderRadius: 10, marginRight: 10 },
+  tabActive: { backgroundColor: '#66cc99' },
+  tabInactive: { backgroundColor: '#FFF' },
+  scrollArea: { paddingHorizontal: 15 },
+  card: { backgroundColor: '#FFF', borderRadius: 12, padding: 15, marginBottom: 15 },
+  userRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  avatar: { width: 50, height: 50, borderRadius: 10, backgroundColor: '#f0f0f0' },
+  userText: { marginLeft: 12 },
+  userName: { fontSize: 16, fontWeight: 'bold' },
+  timeText: { fontSize: 12, color: '#999' },
+  qTitle: { fontSize: 14, fontWeight: 'bold', color: '#333', flex: 1 },
+  qDesc: { fontSize: 13, color: '#666', marginTop: 5, lineHeight: 18 },
+  statsCol: { alignItems: 'flex-end' },
+  statsText: { fontSize: 11, color: '#aaa', fontWeight: '500' },
+  btnRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
+  tag: { backgroundColor: '#66cc99', paddingVertical: 6, paddingHorizontal: 12, borderRadius: 8 },
+  mainBtn: { backgroundColor: '#66cc99', paddingVertical: 6, paddingHorizontal: 15, borderRadius: 8 },
+  btnText: { color: '#FFF', fontWeight: 'bold', fontSize: 12 },
+  actionIcons: { flexDirection: 'row' },
+  iconBtn: { padding: 5 }
 });
 
 export default CommunityForum;

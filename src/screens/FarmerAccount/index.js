@@ -1,18 +1,20 @@
-import {ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity,TextInput, Alert} from "react-native";
-import React, { useState } from "react";
+import {ImageBackground,StyleSheet,Text,View,Image,TouchableOpacity,TextInput, Alert, ActivityIndicator} from "react-native";
+import React, { useState, useEffect, useRef } from "react";
 import SafeBlurView from "../../Components/SafeBlurView";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { Scroll } from "lucide-react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { useRole } from "../../context/RoleContext";
 import { ROLE_FARMER } from "../../constants/roles";
+import { api } from "../../api/client";
+import { getStoredEmail, setStoredUserName, setStoredUserImage } from "../../services/userStorage";
+import { useImagePicker } from "../../hooks/useImagePicker";
 
 const FarmerAccount = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { setRole } = useRole();
+  const isEdit = route.params?.isEdit || false;
   const [isChecked, setIsChecked] = useState(false);
+  const { selectedImage, isLoading, showImagePickerOptions } = useImagePicker();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -24,8 +26,27 @@ const FarmerAccount = () => {
   const [locationError, setLocationError] = useState("");
   const [farmingTypeError, setFarmingTypeError] = useState("");
   const [termsError, setTermsError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitLockedRef = useRef(false);
+  const defaultProfileImage = Image.resolveAssetSource(
+    require("../../assets/Images/ic_launcher.png.jpeg")
+  );
 
-  const handleCreateAccount = () => {
+  useEffect(() => {
+    if (isEdit) {
+      (async () => {
+        const storedEmail = await getStoredEmail();
+        if (storedEmail) {
+          setEmail(storedEmail);
+        }
+      })();
+    }
+  }, [isEdit]);
+
+  const handleSubmit = async () => {
+    if (submitLockedRef.current) return;
+    submitLockedRef.current = true;
+
     // clear previous errors
     setFullNameError("");
     setPhoneError("");
@@ -35,6 +56,7 @@ const FarmerAccount = () => {
     setTermsError("");
 
     const emailRegex = /\S+@\S+\.\S+/;
+    const normalizedEmail = email.trim().toLowerCase();
     const phoneDigits = phone.replace(/\D/g, "");
 
     let hasError = false;
@@ -49,7 +71,7 @@ const FarmerAccount = () => {
       hasError = true;
     }
 
-    if (!email.trim() || !emailRegex.test(email)) {
+    if (!normalizedEmail || !emailRegex.test(normalizedEmail)) {
       setEmailError("Please enter a valid email address.");
       hasError = true;
     }
@@ -64,17 +86,86 @@ const FarmerAccount = () => {
       hasError = true;
     }
 
-    if (!isChecked) {
+    if (!isEdit && !isChecked) {
       setTermsError("You must agree to Terms & Privacy.");
       hasError = true;
     }
 
-    if (hasError) return;
+    if (hasError) {
+      submitLockedRef.current = false;
+      return;
+    }
 
-    // Persist role only after successful signup flow.
-    const selectedRole = route.params?.role || ROLE_FARMER;
-    setRole(selectedRole);
-    navigation.navigate("CongratulationFarmer");
+    setIsSubmitting(true);
+    try {
+      if (isEdit) {
+        // For edit, prepare FormData
+        const formData = new FormData();
+        formData.append('name', fullName);
+        formData.append('email', normalizedEmail);
+        formData.append('number', phone);
+        formData.append('location', location);
+        formData.append('crops_type', farmingType);
+        
+        // Add image if selected
+        if (selectedImage) {
+          formData.append('image', {
+            uri: selectedImage.uri,
+            type: selectedImage.type || 'image/jpeg',
+            name: selectedImage.fileName || 'farmer_image.jpg',
+          });
+          // Use upload method for FormData
+          await api.upload('/api/auth/update_farmer', formData);
+        } else {
+          // If no image, use regular PUT
+          await api.put('/api/auth/update_farmer', {
+            name: fullName,
+            email: normalizedEmail,
+            number: phone,
+            location,
+            crops_type: farmingType,
+          });
+        }
+        // Save updated name and image
+        await setStoredUserName(fullName);
+        if (selectedImage) {
+          await setStoredUserImage(selectedImage.uri);
+        }
+        Alert.alert('Success', 'Profile updated successfully.');
+        navigation.goBack();
+      } else {
+        // For registration, use FormData
+        const formData = new FormData();
+        formData.append('name', fullName);
+        formData.append('email', normalizedEmail);
+        formData.append('number', phone);
+        formData.append('location', location);
+        formData.append('crops_type', farmingType);
+        formData.append('user_type', 'farmer');
+        
+        formData.append('image', {
+          uri: selectedImage?.uri || defaultProfileImage.uri,
+          type: selectedImage?.type || 'image/jpeg',
+          name: selectedImage?.fileName || 'farmer_image.jpg',
+        });
+        
+        // Use upload method for FormData
+        await api.upload('/api/auth/register_farmer', formData);
+        
+        // Save user name and image after registration
+        await setStoredUserName(fullName);
+        await setStoredUserImage(selectedImage?.uri || defaultProfileImage.uri);
+        
+        // On success, navigate to Login to verify email/OTP
+        // Role will be set AFTER OTP verification
+        navigation.navigate("Login", { role: ROLE_FARMER, email: normalizedEmail });
+      }
+    } catch (error) {
+      Alert.alert('Failed', error.message || 'An error occurred.');
+    } finally {
+      submitLockedRef.current = false;
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -85,7 +176,7 @@ const FarmerAccount = () => {
       resizeMode="cover"
     >
       {/* BACK BUTTON */}
-      <TouchableOpacity onPress={() => navigation.navigate("RoleSelect")}>
+      <TouchableOpacity onPress={() => isEdit ? navigation.goBack() : navigation.navigate("RoleSelect")}>
         <Image style={styles.backBtn} source={require("../../assets/Images/arrow.png")} />
       </TouchableOpacity>
 
@@ -98,7 +189,7 @@ const FarmerAccount = () => {
         />
       </View>
 
-      <Text style={styles.account}>Create Farmer Account</Text>
+      <Text style={styles.account}>{isEdit ? 'Update Farmer Profile' : 'Create Farmer Account'}</Text>
 
       {/* CARD */}
       <View style={styles.cardWrapper}>
@@ -188,45 +279,72 @@ const FarmerAccount = () => {
           </View>
           {farmingTypeError ? <Text style={styles.errorText}>{farmingTypeError}</Text> : null}
 
-          {/* TERMS */}
+          {!isEdit && (
+            <>
+              {/* TERMS */}
+              <View style={styles.row}>
+                <TouchableOpacity onPress={() => setIsChecked(!isChecked)}>
+                  <Icon
+                    name={isChecked ? "checkbox" : "square-outline"}
+                    size={22}
+                    color={isChecked ? "#7ADAA5" : "rgba(255,255,255,0.4)"}
+                  />
+                </TouchableOpacity>
 
-         <View style={styles.row}>
-          <TouchableOpacity onPress={() => setIsChecked(!isChecked)}>
-            <Icon
-              name={isChecked ? "checkbox" : "square-outline"}
-              size={22}
-              color={isChecked ? "#7ADAA5" : "rgba(255,255,255,0.4)"}
-            />
-          </TouchableOpacity>
-
-          {/* Is View ko dhyan se dekhein, flex: 1 aur flexShrink lazmi hai */}
-          <View style={{ flex: 1, marginLeft: 10 }}>
-            <Text style={styles.termsTxt} numberOfLines={2}>
-              Agree to <Text style={styles.link}>Terms & Privacy</Text>
-            </Text>
-          </View>
-          </View>
+                {/* Is View ko dhyan se dekhein, flex: 1 aur flexShrink lazmi hai */}
+                <View style={{ flex: 1, marginLeft: 10 }}>
+                  <Text style={styles.termsTxt} numberOfLines={2}>
+                    Agree to <Text style={styles.link}>Terms & Privacy</Text>
+                  </Text>
+                </View>
+              </View>
+              {termsError ? <Text style={styles.errorText}>{termsError}</Text> : null}
+            </>
+          )}
 
           {/* BUTTON */}
           <TouchableOpacity
-            style={styles.createBtn}
-            onPress={handleCreateAccount}
+            style={[styles.createBtn, isSubmitting && styles.disabledBtn]}
+            onPress={handleSubmit}
+            disabled={isSubmitting}
           >
-            <Text style={styles.createTxt}>Create Account</Text>
+            {isSubmitting ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.createTxt}>{isEdit ? 'Update Profile' : 'Create Account'}</Text>
+            )}
           </TouchableOpacity>
 
         </View>
 
       </View>
 
-      {/* Upload circle */}
-        <View style={styles.uploadCircle}>
-         <TouchableOpacity>
-           <Image style={styles.camIcon} source={require("../../assets/Images/camera.png")}/>
-         </TouchableOpacity>
-          <Text style={styles.uploadText}>Upload Picture</Text>
-          <Text style={styles.uploadText1}>(Optional)</Text>
-        </View>
+       <View style={styles.uploadCircle}>
+                          <TouchableOpacity onPress={showImagePickerOptions} disabled={isLoading || isSubmitting}>
+                              {selectedImage ? (
+                                  <Image
+                                      style={styles.selectedImage}
+                                      source={{ uri: selectedImage.uri }}
+                                  />
+                              ) : (
+                                  <View style={styles.camContainer}>
+                                      {isLoading ? (
+                                          <ActivityIndicator size="small" color="#7ADAA5" />
+                                      ) : (
+                                          <Image style={styles.camIcon} source={require("../../assets/Images/camera.png")} />
+                                      )}
+                                  </View>
+                              )}
+                          </TouchableOpacity>
+                          
+                        
+                          {!selectedImage && !isLoading && (
+                              <>
+                                  <Text style={styles.uploadText}>Upload Picture</Text>
+                                  <Text style={styles.uploadText1}>(Optional)</Text>
+                              </>
+                          )}
+                      </View>
 
     </ImageBackground>
     </ScrollView>
@@ -346,6 +464,10 @@ link: {
     marginTop: 35,
   },
 
+  disabledBtn: {
+    opacity: 0.7,
+  },
+
   createTxt: {
     color: "#fff",
     textAlign: "center",
@@ -384,6 +506,12 @@ link: {
     marginLeft:22,
     height: 18,
     width: 22,
+  },
+  selectedImage: {
+    height: 80,
+    width: 80,
+    borderRadius: 50,
+    resizeMode: 'cover',
   },
   errorText: {
     color: '#ff6b6b',

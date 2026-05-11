@@ -3,44 +3,83 @@ import React, { useEffect, useRef } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useRole } from '../../context/RoleContext'
 import { ROLE_EXPERT, ROLE_FARMER } from '../../constants/roles'
+import { getStoredEmail } from '../../services/userStorage'
 
 const SplashScreen = () => {
   const navigation = useNavigation()
-  const { role, isHydrating } = useRole()
+  const { role, isHydrating, clearRole } = useRole()
   const hasNavigated = useRef(false)
+  
   useEffect(() => {
+    // Check if this is a fresh install or app restart with saved role
+    // Don't clear role here - we want to preserve login state on app restart
+  }, [])
+
+  useEffect(() => {
+    const openStoredSession = async (nextRoute) => {
+      if (hasNavigated.current) return
+
+      const storedEmail = await getStoredEmail()
+      if (storedEmail) {
+        hasNavigated.current = true
+        navigation.replace(nextRoute)
+        return
+      }
+
+      await clearRole()
+      hasNavigated.current = true
+      navigation.replace('Onbording')
+    }
+
     const timeoutId = setTimeout(() => {
       if (hasNavigated.current) return
+      
+      // If user is already logged in (role + email exist), navigate to appropriate home
       if (role === ROLE_FARMER) {
-        hasNavigated.current = true
-        navigation.replace('FarmerApp')
+        openStoredSession('FarmerApp')
         return
       }
       if (role === ROLE_EXPERT) {
-        hasNavigated.current = true
-        navigation.replace('ExpertApp')
+        openStoredSession('ExpertApp')
         return
       }
 
-      // If we still don't have a role (or hydration is slow), continue to onboarding
-      // so the app never gets stuck on splash.
+      // If still hydrating, wait longer
       if (isHydrating) return
 
+      // If no saved role, start from onboarding
       hasNavigated.current = true
       navigation.replace('Onbording')
     }, 1200)
 
-    const hardFallbackId = setTimeout(() => {
+    const hardFallbackId = setTimeout(async () => {
       if (hasNavigated.current) return
+      // Fallback to onboarding if anything goes wrong
+      if (!role) {
+        hasNavigated.current = true
+        navigation.replace('Onbording')
+        return
+      }
+
+      const storedEmail = await getStoredEmail()
       hasNavigated.current = true
-      navigation.replace('Onbording')
+      if (!storedEmail) {
+        await clearRole()
+        navigation.replace('Onbording')
+      } else if (role === ROLE_FARMER) {
+        navigation.replace('FarmerApp')
+      } else if (role === ROLE_EXPERT) {
+        navigation.replace('ExpertApp')
+      } else {
+        navigation.replace('Onbording')
+      }
     }, 3500)
 
     return () => {
       clearTimeout(timeoutId)
       clearTimeout(hardFallbackId)
     }
-  }, [navigation, role, isHydrating])
+  }, [navigation, role, isHydrating, clearRole])
 
   return (
 
