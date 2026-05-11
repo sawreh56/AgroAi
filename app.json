@@ -1,4 +1,9 @@
 {
   "name": "AgroAi",
-  "displayName": "AgroAi"
+  "displayName": "AgroAi",
+  "extra": {
+    "eas": {
+      "projectId": "ee9a4b0b-075e-4f3a-b63c-aaa6876c8587"
+    }
+  }
 }
